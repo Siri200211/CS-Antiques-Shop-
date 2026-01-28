@@ -1,10 +1,11 @@
 import Hero from "../components/Hero";
+import BrandStats from "../components/BrandStats";
 
 function Home() {
   return (
     <>
       <Hero />
-      {/* Next sections will be added step by step */}
+      <BrandStats />
     </>
   );
 }
