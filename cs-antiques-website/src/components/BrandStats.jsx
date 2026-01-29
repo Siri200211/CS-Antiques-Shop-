@@ -328,7 +328,7 @@ function BrandStats() {
           </Typography>
 
           <Button
-            onClick={() => navigate("/locations")}
+            onClick={() => navigate("/location")}
             variant="contained"
             sx={{
               background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
