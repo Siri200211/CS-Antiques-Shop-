@@ -86,10 +86,11 @@ function Navbar() {
     <AppBar
       position="sticky"
       sx={{
-        backgroundColor: "rgba(11, 11, 11, 0.95)",
-        backdropFilter: "blur(10px)",
-        borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
-        boxShadow: "0 2px 20px rgba(0, 0, 0, 0.5)",
+        background: "linear-gradient(135deg, rgba(11, 11, 11, 0.7) 0%, rgba(11, 11, 11, 0.5) 100%)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(212, 175, 55, 0.2)",
+        WebkitBackdropFilter: "blur(20px)",
       }}
     >
       <Toolbar
