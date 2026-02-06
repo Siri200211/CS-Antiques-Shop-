@@ -108,10 +108,10 @@ function About() {
         }
       `}</style>
       {/* Our Story */}
-      <Box sx={{ 
-        py: { xs: 5, md: 8 }, 
-        px: { xs: 2, md: 4 }, 
-        width: "100%", 
+      <Box sx={{
+        py: { xs: 5, md: 8 },
+        px: { xs: 2, md: 4 },
+        width: "100%",
         borderBottom: "1px solid rgba(212,175,55,0.1)",
         position: "relative",
         overflow: "hidden",
@@ -459,61 +459,61 @@ function About() {
           </Grid>
         </Grid>
         <Button
-                onClick={() => navigate("/location")}
-                variant="contained"
-                sx={{
-                  background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-                  color: "#0b0b0b",
-                  px: { xs: 4, md: 8 },
-                  py: { xs: 1.5, md: 2 },
-                  fontWeight: 800,
-                  letterSpacing: "0.12em",
-                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  display: "block",
-                  mx: "auto",
-                  mt: 5,
-                  mb: 3,
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  textTransform: "uppercase",
-                  position: "relative",
-                  overflow: "hidden",
-                  boxShadow: "0 15px 45px rgba(212,175,55,0.6), inset 0 1px 0 rgba(255,255,255,0.2)",
-                  border: "none",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    left: "-100%",
-                    width: "100%",
-                    height: "100%",
-                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                    transition: "left 0.6s",
-                  },
-                  "&:hover": {
-                    transform: "translateY(-6px)",
-                    boxShadow: "0 25px 60px rgba(212,175,55,0.8), inset 0 1px 0 rgba(255,255,255,0.3)",
-                    "::before": {
-                      left: "100%",
-                    },
-                  },
-                  "&:active": {
-                    transform: "translateY(-2px)",
-                  },
-                  animation: "slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards",
-                  "@keyframes slideInUp": {
-                    from: {
-                      opacity: 0,
-                      transform: "translateY(40px)",
-                    },
-                    to: {
-                      opacity: 1,
-                      transform: "translateY(0)",
-                    },
-                  },
-                }}
-              >
-                Visit Our Showrooms
-              </Button>
+          onClick={() => navigate("/location")}
+          variant="contained"
+          sx={{
+            background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+            color: "#0b0b0b",
+            px: { xs: 4, md: 8 },
+            py: { xs: 1.5, md: 2 },
+            fontWeight: 800,
+            letterSpacing: "0.12em",
+            transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            display: "block",
+            mx: "auto",
+            mt: 5,
+            mb: 3,
+            fontSize: { xs: "0.9rem", md: "1rem" },
+            textTransform: "uppercase",
+            position: "relative",
+            overflow: "hidden",
+            boxShadow: "0 15px 45px rgba(212,175,55,0.6), inset 0 1px 0 rgba(255,255,255,0.2)",
+            border: "none",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: "-100%",
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+              transition: "left 0.6s",
+            },
+            "&:hover": {
+              transform: "translateY(-6px)",
+              boxShadow: "0 25px 60px rgba(212,175,55,0.8), inset 0 1px 0 rgba(255,255,255,0.3)",
+              "::before": {
+                left: "100%",
+              },
+            },
+            "&:active": {
+              transform: "translateY(-2px)",
+            },
+            animation: "slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards",
+            "@keyframes slideInUp": {
+              from: {
+                opacity: 0,
+                transform: "translateY(40px)",
+              },
+              to: {
+                opacity: 1,
+                transform: "translateY(0)",
+              },
+            },
+          }}
+        >
+          Visit Our Showrooms
+        </Button>
       </Box>
 
       {/* Values Section */}
@@ -600,7 +600,7 @@ function About() {
                         transition: "all 0.3s ease",
                       }}
                     />
-                    <Typography
+                    <Typography 
                       sx={{
                         fontSize: { xs: "1.1rem", md: "1.3rem" },
                         fontWeight: 800,
@@ -633,41 +633,41 @@ function About() {
       {/* Antiques vs Reproductions */}
       <Box sx={{ py: { xs: 5, md: 7 }, px: { xs: 2, md: 4 }, width: "100%" }}>
         <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
-        <Box sx={{ textAlign: "center", mb: 6, animation: "fadeInDown 0.8s ease-out 0.2s forwards", opacity: 0 }}>
-          <Typography
-            sx={{
-              fontSize: { xs: "0.75rem", md: "0.85rem" },
-              fontWeight: 700,
-              color: "#d4af37",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              mb: 2,
-              fontFamily: '"Poppins", sans-serif',
-            }}
-          >
-            Our Collections
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: { xs: "2rem", md: "3rem" },
-              fontWeight: 800,
-              color: "#eaeaea",
-              fontFamily: '"Playfair Display", serif',
-              letterSpacing: "-0.02em",
-              background: "linear-gradient(135deg, #eaeaea 0%, #d4af37 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              animation: "fadeInUp 0.8s ease 0.3s forwards",
-              opacity: 0,
-            }}
-          >
-            Authentic Antiques vs Premium Reproductions
-          </Typography>
-        </Box>
+          <Box sx={{ textAlign: "center", mb: 6, animation: "fadeInDown 0.8s ease-out 0.2s forwards", opacity: 0 }}>
+            <Typography
+              sx={{
+                fontSize: { xs: "0.75rem", md: "0.85rem" },
+                fontWeight: 700,
+                color: "#d4af37",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                mb: 2,
+                fontFamily: '"Poppins", sans-serif',
+              }}
+            >
+              Our Collections
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: { xs: "2rem", md: "3rem" },
+                fontWeight: 800,
+                color: "#eaeaea",
+                fontFamily: '"Playfair Display", serif',
+                letterSpacing: "-0.02em",
+                background: "linear-gradient(135deg, #eaeaea 0%, #d4af37 100%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "fadeInUp 0.8s ease 0.3s forwards",
+                opacity: 0,
+              }}
+            >
+              Authentic Antiques vs Premium Reproductions
+            </Typography>
+          </Box>
 
-        <Grid container spacing={6} sx={{ width: "100%", display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
-          <Box
+          <Grid container spacing={6} sx={{ width: "100%", display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
+            <Box
               sx={{
                 background: "linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%)",
                 border: "2px solid rgba(212, 175, 55, 0.3)",
@@ -736,35 +736,35 @@ function About() {
               </Stack>
             </Box>
 
-          <Box
-            sx={{
-              background: "linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%)",
-              border: "2px solid rgba(212, 175, 55, 0.2)",
-              borderRadius: "20px",
-              p: 4,
-              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-              animation: "fadeInRight 0.8s ease-out 0.5s forwards",
-              opacity: 0,
-              position: "relative",
-              overflow: "hidden",
-              "&::before": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "2px",
-                background: "linear-gradient(90deg, transparent, #d4af37, transparent)",
-                opacity: 0.3,
-              },
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 30px 70px rgba(212, 175, 55, 0.2)",
-                borderColor: "rgba(212, 175, 55, 0.4)",
-                background: "linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%)",
-              },
-            }}
-          >
+            <Box
+              sx={{
+                background: "linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%)",
+                border: "2px solid rgba(212, 175, 55, 0.2)",
+                borderRadius: "20px",
+                p: 4,
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                animation: "fadeInRight 0.8s ease-out 0.5s forwards",
+                opacity: 0,
+                position: "relative",
+                overflow: "hidden",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "2px",
+                  background: "linear-gradient(90deg, transparent, #d4af37, transparent)",
+                  opacity: 0.3,
+                },
+                "&:hover": {
+                  transform: "translateY(-8px)",
+                  boxShadow: "0 30px 70px rgba(212, 175, 55, 0.2)",
+                  borderColor: "rgba(212, 175, 55, 0.4)",
+                  background: "linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%)",
+                },
+              }}
+            >
               <Typography
                 sx={{
                   fontSize: { xs: "1.5rem", md: "2rem" },
@@ -805,7 +805,7 @@ function About() {
                 ))}
               </Stack>
             </Box>
-        </Grid>
+          </Grid>
         </Box>
       </Box>
     </Box>
