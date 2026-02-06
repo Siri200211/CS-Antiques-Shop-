@@ -1,6 +1,7 @@
 import { Box, Container, Typography, Grid, Card, Button, Stack } from "@mui/material";
 import { WhatsApp, FavoriteBorder, Favorite } from "@mui/icons-material";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import col1 from "../assets/images/products/col1.jpeg";
 import col2 from "../assets/images/products/col2.jpeg";
 import col3 from "../assets/images/products/col3.jpeg";
@@ -23,6 +24,7 @@ import col19 from "../assets/images/products/col19.jpeg";
 
 
 function Products() {
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [favorites, setFavorites] = useState({});
 
@@ -75,7 +77,8 @@ function Products() {
   const products = [
     {
       id: 1,
-      name: " ducth box",
+      name: "Dutch Box",
+      category: "Decorative",
       price: "Rs.135,000",
       image: col1,
       originalPrice: "Rs. 150,000",
@@ -84,7 +87,7 @@ function Products() {
     },
     {
       id: 2,
-      name: "ath paththaray",
+      name: "Ath Paththaray",
       category: "Decorative",
       price: "Rs. 28,500",
       originalPrice: "Rs. 34,000",
@@ -94,7 +97,8 @@ function Products() {
     },
     {
       id: 3,
-      name: "brass lamp shade",
+      name: "Brass Lamp Shade",
+      category: "Lighting",
       price: "Rs. 78,000",
       originalPrice: "Rs. 105,000",
       image: col3,
@@ -103,7 +107,7 @@ function Products() {
     },
     {
       id: 4,
-      name: "pettagama with wooden horse,gramophone,cs wooden mirror",
+      name: "Pettagama with Wooden Horse, Gramophone & Wooden Mirror",
       category: "Antique Collection",
       price: "Rs. 350,000",
       originalPrice: "",
@@ -113,7 +117,8 @@ function Products() {
     },
     {
       id: 5,
-      name: "Ebony wood brand new kavicichiya",
+      name: "Ebony Wood Brand New Kavichchiya",
+      category: "Premium Furniture",
       price: "Rs. 12,75,000",
       originalPrice: "Rs. 13,85,000",
       image: col5,
@@ -122,7 +127,8 @@ function Products() {
     },
     {
       id: 6,
-      name: "original antique writing biro cupboard",
+      name: "Original Antique Writing Biro Cupboard",
+      category: "Furniture",
       price: "Rs. 495,000",
       originalPrice: "Rs. 540,000",
       image: col6,
@@ -131,7 +137,7 @@ function Products() {
     },
     {
       id: 7,
-      name: "gramophone",
+      name: "Gramophone",
       category: "Music",
       price: "Rs. 29,000",
       originalPrice: "Rs. 38,000",
@@ -141,7 +147,8 @@ function Products() {
     },
     {
       id: 8,
-      name: "original antique pettagama",
+      name: "Original Antique Pettagama",
+      category: "Furniture",
       price: "Rs. 97,000",
       originalPrice: "Rs. 108,000",
       image: col8,
@@ -150,7 +157,7 @@ function Products() {
     },
     {
       id: 9,
-      name: "ebony wood premium most valuable kavichchiya",
+      name: "Ebony Wood Premium Most Valuable Kavichchiya",
       category: "Premium Furniture",
       price: "Rs. 18,00,000",
       originalPrice: "Rs. 19,85,000",
@@ -160,7 +167,7 @@ function Products() {
     },
     {
       id: 10,
-      name: "rose wood original antique cupboard",
+      name: "Rose Wood Original Antique Cupboard",
       category: "Furniture",
       price: "Rs. 345,000",
       originalPrice: "Rs. 385,000",
@@ -170,7 +177,8 @@ function Products() {
     },
     {
       id: 11,
-      name: "table cupboard",
+      name: "Table Cupboard",
+      category: "Furniture",
       price: "Rs. 135,000",
       originalPrice: "Rs. 152,000",
       image: col11,
@@ -179,8 +187,8 @@ function Products() {
     },
     {
       id: 12,
-      name: "jack wood premium kavichchiya",
-      category: "Art",
+      name: "Jack Wood Premium Kavichchiya",
+      category: "Furniture",
       price: "Rs. 195,000",
       originalPrice: "Rs. 225,000",
       image: col12,
@@ -189,7 +197,7 @@ function Products() {
     },
     {
       id: 13,
-      name: "jack wood original antique dressing table",
+      name: "Jack Wood Original Antique Dressing Table",
       category: "Art",
       price: "Rs. 145,000",
       originalPrice: "Rs. 170,000",
@@ -199,7 +207,7 @@ function Products() {
     },
     {
       id: 14,
-      name: "teak wood grand father chair",
+      name: "Teak Wood Grand Father Chair",
       category: "Art",
       price: "Rs. 68,000",
       originalPrice: "Rs. 76,000",
@@ -210,7 +218,8 @@ function Products() {
     },
     {
       id: 15,
-      name: "premium showcase cupboard jack wood",
+      name: "Premium Showcase Cupboard Jack Wood",
+      category: "Furniture",
       price: "Rs. 235,000",
       originalPrice: "Rs. 255,000",
       image: col15,
@@ -219,7 +228,7 @@ function Products() {
     },
     {
       id: 16,
-      name: "dutch box",
+      name: "Dutch Box",
       category: "Art",
       price: "Rs. 58,000",
       originalPrice: "Rs. 65,000",
@@ -229,7 +238,7 @@ function Products() {
     },
     {
       id: 17,
-      name: "original antique tea trolly",
+      name: "Original Antique Tea Trolly",
       category: "Art",
       price: "Rs. 125,000",
       originalPrice: "Rs. 155,000",
@@ -239,7 +248,7 @@ function Products() {
     },
     {
       id: 18,
-      name: "white siyambala wood rare design coffee table",
+      name: "White Siyambala Wood Rare Design Coffee Table",
       category: "Art",
       price: "Rs. 135,000",
       originalPrice: "Rs. 152,000",
@@ -249,7 +258,7 @@ function Products() {
     },
     {
       id: 19,
-      name: "white siyambala wood rare design kavichchiya",
+      name: "White Siyambala Wood Rare Design Kavichchiya",
       category: "Art",
       price: "Rs. 975,000",
       originalPrice: "Rs. 10,80,000",
@@ -267,17 +276,62 @@ function Products() {
   };
 
   return (
-    <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100vw" }}>
+    <Box 
+      sx={{ 
+        backgroundColor: "#0b0b0b", 
+        minHeight: "100vh", 
+        width: "100vw",
+        background: `
+          linear-gradient(135deg, rgba(0, 0, 0, 0.92) 0%, rgba(20, 15, 10, 0.9) 50%, rgba(0, 0, 0, 0.92) 100%),
+          url(${col9}) center/cover no-repeat fixed
+        `,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        position: "relative",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+            repeating-linear-gradient(
+              90deg,
+              rgba(212, 175, 55, 0.02) 0px,
+              rgba(212, 175, 55, 0.02) 2px,
+              transparent 2px,
+              transparent 4px
+            ),
+            repeating-linear-gradient(
+              0deg,
+              rgba(212, 175, 55, 0.01) 0px,
+              rgba(212, 175, 55, 0.01) 2px,
+              transparent 2px,
+              transparent 4px
+            )
+          `,
+          pointerEvents: "none",
+        }
+      }}
+    >
+      <Box sx={{ position: "relative", zIndex: 1 }}>
       <style>{animationStyles}</style>
 
       {/* Hero Section */}
       <Box
         sx={{
-          background: "linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%)",
+          background: `
+            linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.06) 50%, transparent 100%),
+            radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, transparent 70%)
+          `,
+          backdropFilter: "blur(8px)",
           py: { xs: 6, md: 10 },
           textAlign: "center",
           px: { xs: 2, md: 4 },
           width: "100%",
+          borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
         }}
       >
         <Box
@@ -329,29 +383,39 @@ function Products() {
       </Box>
 
       {/* Products Grid */}
-      <Box sx={{ py: { xs: 8, md: 12 }, px: { xs: 1.5, md: 4 }, width: "100%" }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, px: { xs: 1.5, md: 4 }, width: "100%", background: "radial-gradient(circle at center, rgba(212, 175, 55, 0.03) 0%, transparent 100%)" }}>
         <Container maxWidth="xl">
           <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={{ justifyContent: "center", alignItems: "stretch" }}>
             {products.map((product, index) => (
-              <Grid item xs={6} sm={6} md={3} key={product.id} sx={{ height: "600px", minHeight: "600px", maxHeight: "600px" }}>
+              <Grid item xs={6} sm={6} md={3} key={product.id} sx={{ height: { xs: "auto", md: "600px" }, minHeight: { xs: "auto", md: "600px" }, maxHeight: { xs: "none", md: "600px" } }}>
                 <Card
+                  onClick={() => navigate(`/product/${product.id}`)}
                   sx={{
-                    background: "linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%)",
-                    border: "1px solid rgba(212, 175, 55, 0.2)",
+                    background: `
+                      linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.04) 100%),
+                      radial-gradient(circle at top left, rgba(212, 175, 55, 0.06) 0%, transparent 50%)
+                    `,
+                    border: "1px solid rgba(212, 175, 55, 0.25)",
                     backdropFilter: "blur(10px)",
                     borderRadius: "16px",
                     overflow: "hidden",
-                    height: "530px",
+                    height: { xs: "auto", md: "530px" },
                     width: "100%",
                     transition: "all 0.4s ease",
                     animation: isVisible ? `fadeInUp 0.8s ease-out ${0.1 + index * 0.08}s both` : "none",
                     display: "flex",
                     flexDirection: "column",
                     flex: "0 0 600px",
+                    cursor: "pointer",
+                    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(212, 175, 55, 0.1)",
                     "&:hover": {
                       borderColor: "#d4af37",
-                      boxShadow: "0 30px 80px rgba(212, 175, 55, 0.25)",
+                      boxShadow: "0 40px 100px rgba(212, 175, 55, 0.3), inset 0 1px 0 rgba(212, 175, 55, 0.15)",
                       transform: "translateY(-12px)",
+                      background: `
+                        linear-gradient(135deg, rgba(212, 175, 55, 0.16) 0%, rgba(212, 175, 55, 0.06) 100%),
+                        radial-gradient(circle at top left, rgba(212, 175, 55, 0.08) 0%, transparent 50%)
+                      `,
                     },
                   }}
                 >
@@ -359,13 +423,15 @@ function Products() {
                   <Box
                     sx={{
                       position: "relative",
-                      width: "280px",
+                      width: "100%",
+                      maxWidth: { xs: "200px", md: "280px" },
+                      mx: "auto",
                       overflow: "hidden",
                       backgroundColor: "rgba(212, 175, 55, 0.05)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      flex: "0 0 300px",
+                      flex: { xs: "0 0 160px", md: "0 0 300px" },
                     }}
                   >
                     <Box
@@ -464,13 +530,11 @@ function Products() {
                       p: 2,
                       display: "flex",
                       flexDirection: "column",
-                      width: "250px",
+                      width: { xs: "180px", md: "250px" },
                       overflow: "hidden",
                       flex: 1,
                     }}
                   >
-
-                    {/* Category */}
                     {product.category && (
                       <Typography
                         sx={{
@@ -508,15 +572,15 @@ function Products() {
                     {product.description && (
                       <Typography
                         sx={{
-                          fontSize: "0.8rem",
+                          fontSize: { xs: "0.7rem", md: "0.8rem" },
                           color: "#a0a0a0",
                           fontFamily: "'Poppins', sans-serif",
-                          display: "-webkit-box",
+                          display: { xs: "none", md: "-webkit-box" },
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: "vertical",
                           lineHeight: 1.3,
                           mb: 1,
-                          height: "32px",
+                          height: { xs: "0px", md: "32px" },
                         }}
                       >
                         {product.description}
@@ -552,7 +616,7 @@ function Products() {
                       <Button
                         fullWidth
                         variant="contained"
-                        href={`https://wa.me/94718820809?text=I'm%20interested%20in%20${product.name}`}
+                        href={`https://wa.me/94718820809?text=Hello!%20I'm%20interested%20in%20the%20${encodeURIComponent(product.name)}%20priced%20at%20${encodeURIComponent(product.price)}.%20Please%20check%20the%20full%20details:%20${encodeURIComponent(window.location.origin)}/product/${product.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         startIcon={<WhatsApp />}
@@ -581,6 +645,7 @@ function Products() {
             ))}
           </Grid>
         </Container>
+      </Box>
       </Box>
     </Box>
   );

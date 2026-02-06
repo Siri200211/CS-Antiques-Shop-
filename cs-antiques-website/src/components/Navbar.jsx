@@ -24,9 +24,7 @@ function Navbar() {
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
     { label: "Collections", path: "/products" },
-    { label: "Gallery", path: "/gallery" },
     { label: "Location", path: "/location" },
-    { label: "Contact", path: "/contact" },
   ];
 
   const handleDrawerToggle = () => {
@@ -58,11 +56,12 @@ function Navbar() {
             to={item.path}
             onClick={handleDrawerToggle}
             sx={{
-              py: 1.5,
+              py: 2,
               px: 2,
               "&:hover": {
-                backgroundColor: "rgba(212, 175, 55, 0.1)",
-                borderLeft: "3px solid #d4af37",
+                backgroundColor: "rgba(212, 175, 55, 0.15)",
+                borderLeft: "4px solid #d4af37",
+                pl: "calc(2rem - 4px)",
               },
             }}
           >
@@ -70,9 +69,12 @@ function Navbar() {
               primary={item.label}
               sx={{
                 "& .MuiTypography-root": {
-                  color: "#eaeaea",
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
+                  color: "#d4af37",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  fontSize: "1.1rem",
+                  fontFamily: "'Playfair Display', serif",
+                  textTransform: "uppercase",
                 },
               }}
             />
@@ -140,7 +142,7 @@ function Navbar() {
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
-              gap: 1,
+              gap: 3,
               alignItems: "center",
             }}
           >
@@ -151,28 +153,32 @@ function Navbar() {
                 to={item.path}
                 sx={{
                   color: "#eaeaea",
-                  fontSize: "0.9rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  px: 2,
-                  py: 1,
+                  fontSize: "1.1rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  px: 3,
+                  py: 1.5,
                   position: "relative",
                   transition: "all 0.3s ease",
+                  textTransform: "uppercase",
+                  fontFamily: "'Playfair Display', serif",
                   "&::after": {
                     content: '""',
                     position: "absolute",
                     bottom: 0,
                     left: "50%",
                     width: 0,
-                    height: "2px",
+                    height: "3px",
                     backgroundColor: "#d4af37",
                     transition: "all 0.3s ease",
                     transform: "translateX(-50%)",
+                    borderRadius: "2px",
                   },
                   "&:hover": {
                     color: "#d4af37",
+                    transform: "translateY(-2px)",
                     "&::after": {
-                      width: "80%",
+                      width: "100%",
                     },
                   },
                 }}

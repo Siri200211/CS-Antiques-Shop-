@@ -198,12 +198,13 @@ function BrandStats() {
                   textAlign: "center",
                   p: { xs: 4, md: 5 },
                   border: "2px solid rgba(212,175,55,0.2)",
-                  borderRadius: "16px",
+                  borderRadius: "12px",
                   background: `
-                    linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(0, 0, 0, 0) 50%),
-                    rgba(15, 15, 15, 0.7)
+                    linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                    radial-gradient(circle at top right, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
+                    rgba(15, 15, 15, 0.8)
                   `,
-                  backdropFilter: "blur(12px)",
+                  backdropFilter: "blur(15px)",
                   transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
                   position: "relative",
                   overflow: "hidden",
@@ -221,13 +222,21 @@ function BrandStats() {
                     transformOrigin: "left",
                     transition: "transform 0.5s ease",
                   },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    inset: 0,
+                    background: "radial-gradient(circle at center, rgba(212, 175, 55, 0.02) 0%, transparent 70%)",
+                    pointerEvents: "none",
+                  },
                   "&:hover": {
-                    transform: "translateY(-16px) scale(1.02)",
+                    transform: "translateY(-18px)",
                     borderColor: "#d4af37",
-                    boxShadow: "0 35px 80px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
+                    boxShadow: "0 40px 100px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.15)",
                     background: `
                       linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
-                      rgba(25, 25, 25, 0.9)
+                      radial-gradient(circle at top right, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                      rgba(25, 25, 25, 0.95)
                     `,
                     "&::before": {
                       transform: "scaleX(1)",
@@ -333,20 +342,21 @@ function BrandStats() {
             sx={{
               background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
               color: "#0b0b0b",
-              px: { xs: 5, md: 8 },
-              py: 2,
+              px: { xs: 4, md: 6 },
+              py: 1.5,
               fontWeight: 800,
-              letterSpacing: "0.12em",
+              letterSpacing: "0.11em",
               transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               display: "inline-block",
               mt: 2,
-              fontSize: { xs: "0.9rem", md: "1rem" },
+              fontSize: { xs: "0.8rem", md: "0.9rem" },
               textTransform: "uppercase",
               position: "relative",
               overflow: "hidden",
               border: "none",
               fontFamily: '"Poppins", sans-serif',
-              boxShadow: "0 15px 45px rgba(212,175,55,0.6), inset 0 1px 0 rgba(255,255,255,0.2)",
+              borderRadius: "8px",
+              boxShadow: "0 12px 35px rgba(212,175,55,0.5), inset 0 1px 0 rgba(255,255,255,0.2)",
               "&::before": {
                 content: '""',
                 position: "absolute",
@@ -358,8 +368,8 @@ function BrandStats() {
                 transition: "left 0.6s",
               },
               "&:hover": {
-                transform: "translateY(-6px)",
-                boxShadow: "0 25px 60px rgba(212,175,55,0.8), inset 0 1px 0 rgba(255,255,255,0.3)",
+                transform: "translateY(-5px)",
+                boxShadow: "0 18px 50px rgba(212,175,55,0.7), inset 0 1px 0 rgba(255,255,255,0.3)",
                 "::before": {
                   left: "100%",
                 },

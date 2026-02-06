@@ -249,7 +249,7 @@ function Hero() {
               lineHeight: 1.1,
               letterSpacing: "-0.02em",
               mb: { xs: 3, md: 4 },
-              textShadow: "0 8px 40px rgba(0,0,0,0.7), 0 0 50px rgba(212,175,55,0.4)",
+              textShadow: "0 12px 50px rgba(212,175,55,0.5), 0 0 60px rgba(212,175,55,0.35)",
               fontFamily: '"Playfair Display", serif',
               animation: "fadeInUp 1s ease-out 0.4s forwards",
               opacity: 0,
@@ -296,22 +296,23 @@ function Hero() {
               onClick={handleWhatsAppInquiry}
               variant="contained"
               color="primary"
-              size="large"
+              size="medium"
               sx={{
-                px: { xs: 5, md: 9 },
-                py: 2.2,
-                fontSize: { xs: "0.95rem", md: "1.1rem" },
+                px: { xs: 4, md: 7 },
+                py: 1.6,
+                fontSize: { xs: "0.85rem", md: "0.95rem" },
                 fontWeight: 800,
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-                boxShadow: "0 20px 60px rgba(212,175,55,0.7), inset 0 2px 0 rgba(255,255,255,0.3)",
+                boxShadow: "0 15px 40px rgba(212,175,55,0.6), inset 0 2px 0 rgba(255,255,255,0.3)",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 position: "relative",
                 overflow: "hidden",
                 color: "#000",
                 fontFamily: '"Poppins", sans-serif',
                 border: "none",
+                borderRadius: "8px",
                 "&::before": {
                   content: '""',
                   position: "absolute",
@@ -323,14 +324,14 @@ function Hero() {
                   transition: "left 0.7s",
                 },
                 "&:hover": {
-                  transform: "translateY(-7px)",
-                  boxShadow: "0 30px 80px rgba(212,175,55,0.9), inset 0 2px 0 rgba(255,255,255,0.4)",
+                  transform: "translateY(-5px)",
+                  boxShadow: "0 22px 60px rgba(212,175,55,0.8), inset 0 2px 0 rgba(255,255,255,0.4)",
                   "::before": {
                     left: "100%",
                   },
                 },
                 "&:active": {
-                  transform: "translateY(-3px)",
+                  transform: "translateY(-2px)",
                 },
               }}
             >
@@ -340,23 +341,24 @@ function Hero() {
             <Button
               onClick={handleVisitShowroom}
               variant="outlined"
-              size="large"
+              size="medium"
               sx={{
                 borderColor: "#d4af37",
                 color: "#d4af37",
-                px: { xs: 5, md: 9 },
-                py: 2.2,
-                fontSize: { xs: "0.95rem", md: "1.1rem" },
+                px: { xs: 4, md: 7 },
+                py: 1.6,
+                fontSize: { xs: "0.85rem", md: "0.95rem" },
                 fontWeight: 800,
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                border: "2.5px solid #d4af37",
+                border: "2px solid #d4af37",
                 position: "relative",
                 background: "linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(212,175,55,0.02) 100%)",
                 backdropFilter: "blur(12px)",
                 fontFamily: '"Poppins", sans-serif',
-                boxShadow: "0 12px 40px rgba(212,175,55,0.25), inset 0 1px 0 rgba(212,175,55,0.3)",
+                boxShadow: "0 10px 30px rgba(212,175,55,0.2), inset 0 1px 0 rgba(212,175,55,0.3)",
+                borderRadius: "8px",
                 "&::after": {
                   content: '""',
                   position: "absolute",
@@ -369,15 +371,15 @@ function Hero() {
                 "&:hover": {
                   backgroundColor: "rgba(212,175,55,0.12)",
                   color: "#fff",
-                  transform: "translateY(-7px)",
-                  boxShadow: "0 25px 70px rgba(212,175,55,0.6), inset 0 1px 20px rgba(212,175,55,0.2)",
+                  transform: "translateY(-5px)",
+                  boxShadow: "0 18px 50px rgba(212,175,55,0.5), inset 0 1px 20px rgba(212,175,55,0.2)",
                   borderColor: "#e8c547",
                   "::after": {
                     opacity: 1,
                   },
                 },
                 "&:active": {
-                  transform: "translateY(-3px)",
+                  transform: "translateY(-2px)",
                 },
               }}
             >
