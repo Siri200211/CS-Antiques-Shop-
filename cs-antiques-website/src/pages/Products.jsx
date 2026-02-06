@@ -72,6 +72,42 @@ function Products() {
         transform: translateY(-10px);
       }
     }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(212, 175, 55, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.2);
+      }
+    }
+
+    @keyframes shimmerWave {
+      0% {
+        background-position: -1000px center;
+      }
+      100% {
+        background-position: 1000px center;
+      }
+    }
+
+    @keyframes borderGlow {
+      0%, 100% {
+        border-color: rgba(212, 175, 55, 0.3);
+      }
+      50% {
+        border-color: rgba(212, 175, 55, 0.6);
+      }
+    }
+
+    @keyframes floatSmall {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
   `;
 
   const products = [
@@ -323,20 +359,42 @@ function Products() {
       <Box
         sx={{
           background: `
-            linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.06) 50%, transparent 100%),
-            radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, transparent 70%)
+            linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 50%, rgba(212, 175, 55, 0) 100%),
+            radial-gradient(circle at 30% 60%, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
+            radial-gradient(circle at 70% 40%, rgba(212, 175, 55, 0.08) 0%, transparent 50%)
           `,
-          backdropFilter: "blur(8px)",
+          backdropFilter: "blur(12px)",
           py: { xs: 6, md: 10 },
           textAlign: "center",
           px: { xs: 2, md: 4 },
           width: "100%",
-          borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
+          borderBottom: "2px solid rgba(212, 175, 55, 0.2)",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "2px",
+            background: "linear-gradient(90deg, transparent, #d4af37, transparent)",
+            opacity: 0.6,
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            background: "radial-gradient(circle at center, rgba(212, 175, 55, 0.02) 0%, transparent 70%)",
+            pointerEvents: "none",
+          },
         }}
       >
         <Box
           sx={{
             animation: isVisible ? "fadeInUp 0.8s ease-out 0.1s both" : "none",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           <Typography
@@ -348,6 +406,7 @@ function Products() {
               textTransform: "uppercase",
               mb: 2,
               fontFamily: "'Playfair Display', serif",
+              animation: "floatSmall 4s ease-in-out infinite",
             }}
           >
             Curated Collection
@@ -359,11 +418,13 @@ function Products() {
               color: "#d4af37",
               mb: 2,
               letterSpacing: "0.02em",
-              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 50%, #d4af37 100%)",
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               fontFamily: "'Playfair Display', serif",
+              textShadow: "0 20px 60px rgba(212,175,55,0.3), 0 0 80px rgba(212,175,55,0.2)",
+              filter: "drop-shadow(0 10px 30px rgba(212,175,55,0.25))",
             }}
           >
             Premium Antiques
@@ -392,30 +453,47 @@ function Products() {
                   onClick={() => navigate(`/product/${product.id}`)}
                   sx={{
                     background: `
-                      linear-gradient(135deg, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.04) 100%),
-                      radial-gradient(circle at top left, rgba(212, 175, 55, 0.06) 0%, transparent 50%)
+                      linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.06) 100%),
+                      radial-gradient(circle at top left, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                      radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.04) 0%, transparent 50%)
                     `,
-                    border: "1px solid rgba(212, 175, 55, 0.25)",
-                    backdropFilter: "blur(10px)",
+                    border: "1.5px solid rgba(212, 175, 55, 0.25)",
+                    backdropFilter: "blur(12px)",
                     borderRadius: "16px",
                     overflow: "hidden",
                     height: { xs: "auto", md: "530px" },
                     width: "100%",
-                    transition: "all 0.4s ease",
+                    transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
                     animation: isVisible ? `fadeInUp 0.8s ease-out ${0.1 + index * 0.08}s both` : "none",
                     display: "flex",
                     flexDirection: "column",
                     flex: "0 0 600px",
                     cursor: "pointer",
-                    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(212, 175, 55, 0.1)",
+                    boxShadow: "0 25px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 55, 0.15), 0 0 30px rgba(212, 175, 55, 0.15)",
+                    position: "relative",
+                    "&::before": {
+                      content: '""',
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "2px",
+                      background: "linear-gradient(90deg, transparent, #d4af37, transparent)",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease",
+                    },
                     "&:hover": {
                       borderColor: "#d4af37",
-                      boxShadow: "0 40px 100px rgba(212, 175, 55, 0.3), inset 0 1px 0 rgba(212, 175, 55, 0.15)",
-                      transform: "translateY(-12px)",
+                      boxShadow: "0 50px 120px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(212, 175, 55, 0.25), 0 0 60px rgba(212, 175, 55, 0.3)",
+                      transform: "translateY(-16px)",
                       background: `
-                        linear-gradient(135deg, rgba(212, 175, 55, 0.16) 0%, rgba(212, 175, 55, 0.06) 100%),
-                        radial-gradient(circle at top left, rgba(212, 175, 55, 0.08) 0%, transparent 50%)
+                        linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.08) 100%),
+                        radial-gradient(circle at top left, rgba(212, 175, 55, 0.12) 0%, transparent 50%),
+                        radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.06) 0%, transparent 50%)
                       `,
+                      "&::before": {
+                        opacity: 1,
+                      },
                     },
                   }}
                 >
@@ -427,11 +505,16 @@ function Products() {
                       maxWidth: { xs: "200px", md: "280px" },
                       mx: "auto",
                       overflow: "hidden",
-                      backgroundColor: "rgba(212, 175, 55, 0.05)",
+                      backgroundColor: "rgba(212, 175, 55, 0.08)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       flex: { xs: "0 0 160px", md: "0 0 300px" },
+                      borderBottom: "1px solid rgba(212, 175, 55, 0.15)",
+                      background: `
+                        linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.02) 100%),
+                        radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, transparent 50%)
+                      `,
                     }}
                   >
                     <Box
@@ -539,12 +622,13 @@ function Products() {
                       <Typography
                         sx={{
                           fontSize: "0.7rem",
-                          fontWeight: 600,
+                          fontWeight: 700,
                           color: "#d4af37",
                           textTransform: "uppercase",
-                          letterSpacing: "0.1em",
+                          letterSpacing: "0.12em",
                           fontFamily: "'Poppins', sans-serif",
                           mb: 0.5,
+                          textShadow: "0 2px 8px rgba(212, 175, 55, 0.2)",
                         }}
                       >
                         {product.category}
@@ -554,7 +638,7 @@ function Products() {
                     <Typography
                       sx={{
                         fontSize: "1rem",
-                        fontWeight: 700,
+                        fontWeight: 800,
                         color: "#eaeaea",
                         fontFamily: "'Playfair Display', serif",
                         height: "44px",
@@ -563,6 +647,8 @@ function Products() {
                         WebkitBoxOrient: "vertical",
                         lineHeight: 1.1,
                         mb: 1.5,
+                        textShadow: "0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(212, 175, 55, 0.2)",
+                        letterSpacing: "-0.02em",
                       }}
                     >
                       {product.name}
@@ -588,13 +674,18 @@ function Products() {
                     )}
 
                     {/* Price Section */}
-                    <Box sx={{ height: "40px", display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ height: "40px", display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                       <Typography
                         sx={{
-                          fontSize: "1.2rem",
+                          fontSize: "1.3rem",
                           fontWeight: 900,
-                          color: "#e1b625",
+                          background: "linear-gradient(135deg, #e1b625 0%, #d4af37 100%)",
+                          backgroundClip: "text",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
                           fontFamily: "'Playfair Display', serif",
+                          textShadow: "0 4px 12px rgba(212, 175, 55, 0.2)",
+                          letterSpacing: "-0.01em",
                         }}
                       >
                         {product.price}
@@ -621,18 +712,39 @@ function Products() {
                         rel="noopener noreferrer"
                         startIcon={<WhatsApp />}
                         sx={{
-                          background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                          background: "linear-gradient(135deg, #d4af37 0%, #e8c547 50%, #d4af37 100%)",
                           color: "#0b0b0b",
                           fontWeight: 700,
                           fontSize: "0.8rem",
                           fontFamily: "'Poppins', sans-serif",
                           py: 1,
-                          transition: "all 0.3s ease",
+                          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                           textTransform: "uppercase",
                           letterSpacing: "0.05em",
+                          borderRadius: "8px",
+                          position: "relative",
+                          overflow: "hidden",
+                          boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                          "&::before": {
+                            content: '""',
+                            position: "absolute",
+                            top: 0,
+                            left: "-100%",
+                            width: "100%",
+                            height: "100%",
+                            background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)",
+                            transition: "left 0.6s ease",
+                          },
                           "&:hover": {
-                            transform: "translateY(-3px)",
-                            boxShadow: "0 15px 40px rgba(212, 175, 55, 0.5)",
+                            transform: "translateY(-4px)",
+                            boxShadow: "0 20px 50px rgba(212, 175, 55, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+                            background: "linear-gradient(135deg, #e8c547 0%, #f0d454 50%, #e8c547 100%)",
+                            "&::before": {
+                              left: "100%",
+                            },
+                          },
+                          "&:active": {
+                            transform: "translateY(-1px)",
                           },
                         }}
                       >

@@ -3,6 +3,7 @@ import { CheckCircle, TrendingUp, Star, Handshake } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import chairmanImg from "../assets/images/leadership/chairman.png";
 import managerImg from "../assets/images/leadership/manager.png";
+import logoImg from "../assets/images/logo.png";
 
 function About() {
   const navigate = useNavigate();
@@ -106,7 +107,193 @@ function About() {
             box-shadow: 0 0 40px rgba(212,175,55,0.6);
           }
         }
+
+        @keyframes floatSmall {
+          0%, 100% {
+            transform: translateY(0px) translateX(0px);
+            opacity: 0.15;
+          }
+          25% {
+            transform: translateY(-20px) translateX(15px);
+            opacity: 0.25;
+          }
+          50% {
+            transform: translateY(-40px) translateX(0px);
+            opacity: 0.15;
+          }
+          75% {
+            transform: translateY(-20px) translateX(-15px);
+            opacity: 0.25;
+          }
+        }
+
+        @keyframes floatLarge {
+          0%, 100% {
+            transform: translateY(0px) translateX(0px) rotate(0deg);
+            opacity: 0.08;
+          }
+          33% {
+            transform: translateY(-60px) translateX(40px) rotate(120deg);
+            opacity: 0.12;
+          }
+          66% {
+            transform: translateY(-100px) translateX(-40px) rotate(240deg);
+            opacity: 0.08;
+          }
+        }
+
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.5;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+
+        @keyframes borderGlow {
+          0%, 100% {
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.2), 0 0 30px rgba(212, 175, 55, 0.2);
+          }
+          50% {
+            box-shadow: inset 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.4);
+          }
+        }
+
+        @keyframes shimmerWave {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
       `}</style>
+
+      {/* Animated Background Elements */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+          background: "linear-gradient(135deg, #0b0b0b 0%, #1a1410 50%, #0b0b0b 100%)",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            background: `
+              radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 50%)
+            `,
+            animation: "gradientShift 15s ease-in-out infinite",
+            opacity: 0.7,
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            inset: 0,
+            background: `
+              repeating-linear-gradient(
+                90deg,
+                rgba(212, 175, 55, 0.03) 0px,
+                rgba(212, 175, 55, 0.03) 2px,
+                transparent 2px,
+                transparent 4px
+              ),
+              repeating-linear-gradient(
+                0deg,
+                rgba(212, 175, 55, 0.02) 0px,
+                rgba(212, 175, 55, 0.02) 2px,
+                transparent 2px,
+                transparent 4px
+              )
+            `,
+            animation: "pulse 4s ease-in-out infinite",
+          },
+        }}
+      />
+
+      {/* Logo Watermark */}
+      <Box
+        component="img"
+        src={logoImg}
+        sx={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: { xs: "400px", md: "600px" },
+          height: { xs: "400px", md: "600px" },
+          opacity: 0.06,
+          zIndex: 0,
+          pointerEvents: "none",
+          filter: "drop-shadow(0 0 20px rgba(212, 175, 55, 0.1))",
+        }}
+      />
+
+      {/* Floating Orbs */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: "10%",
+          left: "5%",
+          width: "300px",
+          height: "300px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.05))",
+          filter: "blur(80px)",
+          animation: "floatLarge 20s ease-in-out infinite",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: "10%",
+          right: "10%",
+          width: "400px",
+          height: "400px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.02))",
+          filter: "blur(100px)",
+          animation: "floatSmall 25s ease-in-out infinite reverse",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+      <Box
+        sx={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          width: "250px",
+          height: "250px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.15), transparent)",
+          filter: "blur(60px)",
+          animation: "floatSmall 18s ease-in-out infinite",
+          transform: "translate(-50%, -50%)",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
       {/* Our Story */}
       <Box sx={{
         py: { xs: 5, md: 8 },
@@ -115,6 +302,7 @@ function About() {
         borderBottom: "1px solid rgba(212,175,55,0.1)",
         position: "relative",
         overflow: "hidden",
+        zIndex: 1,
         "&::before": {
           content: '""',
           position: "absolute",
@@ -210,7 +398,7 @@ function About() {
                 backdropFilter: "blur(10px)",
                 border: "2px solid rgba(212, 175, 55, 0.3)",
                 boxShadow: "0 20px 60px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)",
-                animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards",
+                animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards, borderGlow 4s ease-in-out 1s infinite",
                 opacity: 0,
                 position: "relative",
                 overflow: "hidden",
@@ -340,7 +528,7 @@ function About() {
                       borderRadius: "16px",
                       p: { xs: 1.5, md: 2.5 },
                       transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                      animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.7s forwards",
+                      animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.7s forwards, borderGlow 5s ease-in-out 1.5s infinite",
                       opacity: 0,
                       "&:hover": {
                         transform: "translateY(-12px) scale(1.02)",
@@ -403,7 +591,7 @@ function About() {
                       borderRadius: "16px",
                       p: { xs: 1.5, md: 2.5 },
                       transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                      animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards",
+                      animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards, borderGlow 5s ease-in-out 2s infinite",
                       opacity: 0,
                       "&:hover": {
                         transform: "translateY(-12px) scale(1.02)",
@@ -517,7 +705,7 @@ function About() {
       </Box>
 
       {/* Values Section */}
-      <Box sx={{ backgroundColor: "rgba(212, 175, 55, 0.05)", py: { xs: 5, md: 7 }, borderTop: "1px solid rgba(212,175,55,0.1)", borderBottom: "1px solid rgba(212,175,55,0.1)", px: { xs: 2, md: 4 }, width: "100%", position: "relative", overflow: "hidden" }}>
+      <Box sx={{ backgroundColor: "rgba(212, 175, 55, 0.05)", py: { xs: 5, md: 7 }, borderTop: "1px solid rgba(212,175,55,0.1)", borderBottom: "1px solid rgba(212,175,55,0.1)", px: { xs: 2, md: 4 }, width: "100%", position: "relative", overflow: "hidden", zIndex: 1 }}>
         <Box sx={{ maxWidth: "1200px", mx: "auto" }}>
           <Box sx={{ textAlign: "center", mb: 6, animation: "fadeInDown 0.8s ease-out 0.2s forwards", opacity: 0 }}>
             <Typography
@@ -631,7 +819,7 @@ function About() {
       </Box>
 
       {/* Antiques vs Reproductions */}
-      <Box sx={{ py: { xs: 5, md: 7 }, px: { xs: 2, md: 4 }, width: "100%" }}>
+      <Box sx={{ py: { xs: 5, md: 7 }, px: { xs: 2, md: 4 }, width: "100%", position: "relative", zIndex: 1 }}>
         <Box sx={{ maxWidth: "1400px", mx: "auto" }}>
           <Box sx={{ textAlign: "center", mb: 6, animation: "fadeInDown 0.8s ease-out 0.2s forwards", opacity: 0 }}>
             <Typography
@@ -674,7 +862,7 @@ function About() {
                 borderRadius: "20px",
                 p: 4,
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                animation: "fadeInLeft 0.8s ease-out 0.4s forwards",
+                animation: "fadeInLeft 0.8s ease-out 0.4s forwards, borderGlow 6s ease-in-out 1s infinite",
                 opacity: 0,
                 position: "relative",
                 overflow: "hidden",
@@ -743,7 +931,7 @@ function About() {
                 borderRadius: "20px",
                 p: 4,
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                animation: "fadeInRight 0.8s ease-out 0.5s forwards",
+                animation: "fadeInRight 0.8s ease-out 0.5s forwards, borderGlow 6s ease-in-out 1.5s infinite",
                 opacity: 0,
                 position: "relative",
                 overflow: "hidden",
