@@ -4,11 +4,23 @@ import { useEffect, useState } from "react";
 import col1 from "../assets/images/products/col1.jpeg";
 import col2 from "../assets/images/products/col2.jpeg";
 import col3 from "../assets/images/products/col3.jpeg";
-import col4 from "../assets/images/products/cal4.jpeg";
+import col4 from "../assets/images/products/col4.jpeg";
 import col5 from "../assets/images/products/col5.jpeg";
 import col6 from "../assets/images/products/col6.jpeg";
 import col7 from "../assets/images/products/col7.jpeg";
 import col8 from "../assets/images/products/col8.jpeg";
+import col9 from "../assets/images/products/col9.jpeg";
+import col10 from "../assets/images/products/col10.jpeg";
+import col11 from "../assets/images/products/col11.jpeg";
+import col12 from "../assets/images/products/col12.jpeg";
+import col13 from "../assets/images/products/col13.jpeg";
+import col14 from "../assets/images/products/col14.jpeg";
+import col15 from "../assets/images/products/col15.jpeg";
+import col16 from "../assets/images/products/col16.jpeg";
+import col17 from "../assets/images/products/col17.jpeg";
+import col18 from "../assets/images/products/col18.jpeg";
+import col19 from "../assets/images/products/col19.jpeg";
+
 
 function Products() {
   const [isVisible, setIsVisible] = useState(false);
@@ -63,92 +75,188 @@ function Products() {
   const products = [
     {
       id: 1,
-      name: "pettagam cabinet",
-      category: "Furniture",
-      price: "Rs. 85,000",
-      originalPrice: "Rs. 1,20,000",
+      name: " ducth box",
+      price: "Rs.135,000",
       image: col1,
-      description: "Exquisite mahogany cabinet with hand-carved",
-      era: "1940s",
-      condition: "Restored",
+      originalPrice: "Rs. 150,000",
+      description: "Elegant dutch wooden box with brass inlays",
+      condition: "Brand New",
     },
     {
       id: 2,
-      name: "Classic Cupboard",
-      category: "Furniture",
-      price: "Rs. 65,000",
-      originalPrice: "Rs. 95,000",
+      name: "ath paththaray",
+      category: "Decorative",
+      price: "Rs. 28,500",
+      originalPrice: "Rs. 34,000",
       image: col2,
-      description: "Exquisite mahogany cabinet with hand-carved",
-      era: "1930s",
-      condition: "Fully Functional",
+      description: "Traditional brass water vessel with intricate carvings",
+      condition: "Well-Preserved",
     },
     {
       id: 3,
-      name: "Vintage Brass Lamp",
-      category: "Furniture",
-      price: "Rs. 72,000",
-      originalPrice: "Rs. 1,10,000",
+      name: "brass lamp shade",
+      price: "Rs. 78,000",
+      originalPrice: "Rs. 105,000",
       image: col3,
       description: "Art Deco brass table lamp with silk shade",
-      era: "1920s",
-      condition: "Excellent",
+      condition: "Fully Restored",
     },
     {
       id: 4,
-      name: "Antique Desk Set",
-      category: "Collectibles",
-      price: "Rs. 48,000",
-      originalPrice: "Rs. 75,000",
+      name: "pettagama with wooden horse,gramophone,cs wooden mirror",
+      category: "Antique Collection",
+      price: "Rs. 350,000",
+      originalPrice: "",
       image: col4,
-      description: "Leather-bound desk with brass accessories",
-      era: "1950s",
-      condition: "Pristine",
+      description: "Rare combination collection featuring wooden pettagama, gramophone, and ornate wooden mirror",
+      condition: "Excellent",
     },
     {
       id: 5,
-      name: "Lucky Horses",
-      category: "Furniture",
-      price: "Rs. 95,000",
-      originalPrice: "Rs. 1,35,000",
+      name: "Ebony wood brand new kavicichiya",
+      price: "Rs. 12,75,000",
+      originalPrice: "Rs. 13,85,000",
       image: col5,
       description: "Premium wooden pettagam with intricate ",
-      era: "1910s",
-      condition: "Restored",
+      condition: "Brand new",
     },
     {
       id: 6,
-      name: "Hand-made Ships",
-      category: "Ship",
-      price: "Rs. 28,000",
-      originalPrice: "Rs. 45,000",
+      name: "original antique writing biro cupboard",
+      price: "Rs. 495,000",
+      originalPrice: "Rs. 540,000",
       image: col6,
-      description: "Art Deco brass table lamp with silk shade",
-      era: "1960s",
-      condition: "Working",
+      description: "original antique burma teak wood and ebony wood writing biro cupboard",
+      condition: "Pristine",
     },
     {
       id: 7,
-      name: "Hand-Painted Mirror",
-      category: "Decorative",
-      price: "Rs. 38,000",
-      originalPrice: "Rs. 60,000",
+      name: "gramophone",
+      category: "Music",
+      price: "Rs. 29,000",
+      originalPrice: "Rs. 38,000",
       image: col7,
-      description: "Ornate wooden frame with hand-painted ",
-      era: "1930s",
-      condition: "Excellent",
+      description: "Vintage gramophone with ornate wooden body, fully functional",
+      condition: "Fully Functional",
     },
     {
       id: 8,
-      name: "Carved Wooden kannappu",
-      category: "Art",
-      price: "Rs. 55,000",
-      originalPrice: "Rs. 85,000",
+      name: "original antique pettagama",
+      price: "Rs. 97,000",
+      originalPrice: "Rs. 108,000",
       image: col8,
       description: "Intricately carved teak panel with traditional motifs",
-      era: "1920s",
+      condition: "Fully Restored",
+    },
+    {
+      id: 9,
+      name: "ebony wood premium most valuable kavichchiya",
+      category: "Premium Furniture",
+      price: "Rs. 18,00,000",
+      originalPrice: "Rs. 19,85,000",
+      image: col9,
+      description: "Exceptionally rare ebony wood furniture piece, hand-carved with premium craftsmanship",
       condition: "Excellent",
     },
+    {
+      id: 10,
+      name: "rose wood original antique cupboard",
+      category: "Furniture",
+      price: "Rs. 345,000",
+      originalPrice: "Rs. 385,000",
+      image: col10,
+      description: "Original antique rose wood cupboard with traditional hand-carved details",
+      condition: "Pristine",
+    },
+    {
+      id: 11,
+      name: "table cupboard",
+      price: "Rs. 135,000",
+      originalPrice: "Rs. 152,000",
+      image: col11,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Well-Preserved",
+    },
+    {
+      id: 12,
+      name: "jack wood premium kavichchiya",
+      category: "Art",
+      price: "Rs. 195,000",
+      originalPrice: "Rs. 225,000",
+      image: col12,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "brand new",
+    },
+    {
+      id: 13,
+      name: "jack wood original antique dressing table",
+      category: "Art",
+      price: "Rs. 145,000",
+      originalPrice: "Rs. 170,000",
+      image: col13,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Fully Restored",
+    },
+    {
+      id: 14,
+      name: "teak wood grand father chair",
+      category: "Art",
+      price: "Rs. 68,000",
+      originalPrice: "Rs. 76,000",
+      image: col14,
+      description: "Intricately carved teak panel with traditional motifs",
+      era: "1920s",
+      condition: "Good Condition",
+    },
+    {
+      id: 15,
+      name: "premium showcase cupboard jack wood",
+      price: "Rs. 235,000",
+      originalPrice: "Rs. 255,000",
+      image: col15,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Pristine",
+    },
+    {
+      id: 16,
+      name: "dutch box",
+      category: "Art",
+      price: "Rs. 58,000",
+      originalPrice: "Rs. 65,000",
+      image: col16,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: " brand new",
+    },
+    {
+      id: 17,
+      name: "original antique tea trolly",
+      category: "Art",
+      price: "Rs. 125,000",
+      originalPrice: "Rs. 155,000",
+      image: col17,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Well-Preserved",
+    },
+    {
+      id: 18,
+      name: "white siyambala wood rare design coffee table",
+      category: "Art",
+      price: "Rs. 135,000",
+      originalPrice: "Rs. 152,000",
+      image: col18,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Fully Restored",
+    },
+    {
+      id: 19,
+      name: "white siyambala wood rare design kavichchiya",
+      category: "Art",
+      price: "Rs. 975,000",
+      originalPrice: "Rs. 10,80,000",
+      image: col19,
+      description: "Intricately carved teak panel with traditional motifs",
+      condition: "Pristine",
+    }
   ];
 
   const toggleFavorite = (id) => {
@@ -233,9 +341,7 @@ function Products() {
                     backdropFilter: "blur(10px)",
                     borderRadius: "16px",
                     overflow: "hidden",
-                    height: "100%",
-                    minHeight: "600px",
-                    maxHeight: "600px",
+                    height: "530px",
                     width: "100%",
                     transition: "all 0.4s ease",
                     animation: isVisible ? `fadeInUp 0.8s ease-out ${0.1 + index * 0.08}s both` : "none",
@@ -253,10 +359,7 @@ function Products() {
                   <Box
                     sx={{
                       position: "relative",
-                      width: "100%",
-                      height: "300px",
-                      minHeight: "300px",
-                      maxHeight: "300px",
+                      width: "280px",
                       overflow: "hidden",
                       backgroundColor: "rgba(212, 175, 55, 0.05)",
                       display: "flex",
@@ -361,28 +464,28 @@ function Products() {
                       p: 2,
                       display: "flex",
                       flexDirection: "column",
-                      height: "300px",
                       width: "250px",
-                      maxHeight: "300px",
                       overflow: "hidden",
-                      flex: "0 0 300px",
+                      flex: 1,
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: "0.75rem",
-                        color: "#d4af37",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.1em",
-                        fontFamily: "'Poppins', sans-serif",
-                        fontWeight: 600,
-                        height: "16px",
-                        overflow: "hidden",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {product.category}
-                    </Typography>
+
+                    {/* Category */}
+                    {product.category && (
+                      <Typography
+                        sx={{
+                          fontSize: "0.7rem",
+                          fontWeight: 600,
+                          color: "#d4af37",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.1em",
+                          fontFamily: "'Poppins', sans-serif",
+                          mb: 0.5,
+                        }}
+                      >
+                        {product.category}
+                      </Typography>
+                    )}
 
                     <Typography
                       sx={{
@@ -394,37 +497,39 @@ function Products() {
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
                         lineHeight: 1.1,
+                        mb: 1.5,
                       }}
                     >
                       {product.name}
                     </Typography>
 
-                    <Typography
-                      sx={{
-                        fontSize: "0.8rem",
-                        color: "#b0b0b0",
-                        lineHeight: 1.4,
-                        fontFamily: "'Poppins', sans-serif",
-                        height: "40px",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        fontWeight: 400,
-                      }}
-                    >
-                      {product.description}
-                    </Typography>
+                    {/* Description */}
+                    {product.description && (
+                      <Typography
+                        sx={{
+                          fontSize: "0.8rem",
+                          color: "#a0a0a0",
+                          fontFamily: "'Poppins', sans-serif",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          lineHeight: 1.3,
+                          mb: 1,
+                          height: "32px",
+                        }}
+                      >
+                        {product.description}
+                      </Typography>
+                    )}
 
                     {/* Price Section */}
                     <Box sx={{ height: "40px", display: "flex", alignItems: "center", gap: 1 }}>
                       <Typography
                         sx={{
-                          fontSize: "0.95rem",
-                          fontWeight: 700,
-                          color: "#d4af37",
+                          fontSize: "1.2rem",
+                          fontWeight: 900,
+                          color: "#e1b625",
                           fontFamily: "'Playfair Display', serif",
                         }}
                       >
@@ -432,7 +537,7 @@ function Products() {
                       </Typography>
                       <Typography
                         sx={{
-                          fontSize: "0.75rem",
+                          fontSize: "0.85rem",
                           color: "#707070",
                           textDecoration: "line-through",
                           fontFamily: "'Poppins', sans-serif",
