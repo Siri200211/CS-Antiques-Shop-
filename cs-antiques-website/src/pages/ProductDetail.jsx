@@ -233,7 +233,8 @@ function ProductDetail() {
     );
   }
 
-  const productPageUrl = `${window.location.origin}/product/${product.id}`;
+  const baseUrl = import.meta.env.VITE_BASE_URL || "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app";
+  const productPageUrl = `${baseUrl}/product/${product.id}`;
 
   return (
     <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100vw", py: { xs: 4, md: 8 }, px: { xs: 2, md: 4 }, display: "flex", justifyContent: "center" }}>
