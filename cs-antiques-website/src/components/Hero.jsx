@@ -10,6 +10,7 @@ import {
 import { KeyboardArrowDown, Diamond } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
+import heroBg from "../assets/images/home/hero.png";
 
 function Hero() {
   const theme = useTheme();
@@ -46,7 +47,7 @@ function Hero() {
             rgba(0,0,0,0.55) 65%,
             rgba(0,0,0,0.15) 100%
           ),
-          url("/src/assets/images/home/hero.png")
+          url(${heroBg})
         `,
         backgroundSize: "cover",
         backgroundPosition: "center top",
