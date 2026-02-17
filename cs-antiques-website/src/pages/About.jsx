@@ -516,7 +516,7 @@ function About() {
               </Box>
 
               {/* Leadership Photos Side by Side */}
-              <Grid container spacing={{ xs: 2, md: 8 }}>
+              <Grid container spacing={{ xs: 1.2, md: 8 }}>
                 {/* Chairman */}
                 <Grid item xs={6}>
                   <Box
@@ -543,8 +543,8 @@ function About() {
                       src={chairmanImg}
                       alt="Chairman"
                       sx={{
-                        height: { xs: "160px", md: "300px" },
-                        width: { xs: "160px", md: "300px" },
+                        height: { xs: "130px", md: "300px" },
+                        width: { xs: "130px", md: "300px" },
                         borderRadius: "12px",
                         border: "2px solid rgba(212, 175, 55, 0.3)",
                         objectFit: "contain",
@@ -589,7 +589,7 @@ function About() {
                       border: "2px solid rgba(212, 175, 55, 0.3)",
                       backdropFilter: "blur(10px)",
                       borderRadius: "16px",
-                      p: { xs: 1.5, md: 2.5 },
+                     p: { xs: 1, md: 2.5 },
                       transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                       animation: "scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards, borderGlow 5s ease-in-out 2s infinite",
                       opacity: 0,
@@ -606,8 +606,8 @@ function About() {
                       src={managerImg}
                       alt="Manager"
                       sx={{
-                        height: { xs: "160px", md: "300px" },
-                        width: { xs: "160px", md: "300px" },
+                        height: { xs: "130px", md: "300px" },
+                        width: { xs: "130px", md: "300px" },
                         borderRadius: "12px",
                         border: "2px solid rgba(212, 175, 55, 0.3)",
                         objectFit: "contain",
