@@ -113,7 +113,7 @@ function Products() {
   const products = [
     {
       id: 1,
-      name: "Dutch Box",
+      name: "Dutch Box122",
       category: "Decorative",
       price: "Rs.135,000",
       image: col1,
