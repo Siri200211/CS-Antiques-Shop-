@@ -113,7 +113,7 @@ function Products() {
   const products = [
     {
       id: 1,
-      name: "Dutch Box122",
+      name: "Dutch Box",
       category: "Decorative",
       price: "Rs.135,000",
       image: col1,
@@ -468,9 +468,9 @@ function Products() {
                   md={3}
                   key={product.id}
                   sx={{
-                    height: { xs: "auto", md: "600px" },
-                    minHeight: { xs: "auto", md: "600px" },
-                    maxHeight: { xs: "none", md: "600px" },
+                    height: { xs: "auto", md: "520px" },
+                    minHeight: { xs: "auto", md: "520px" },
+                    maxHeight: { xs: "none", md: "520px" },
 
                     // ✅ HARD FORCE 2 PER ROW MOBILE
                     display: "flex",
@@ -489,8 +489,13 @@ function Products() {
                       backdropFilter: "blur(12px)",
                       borderRadius: "16px",
                       overflow: "hidden",
-                      height: { xs: "auto", md: "530px" },
-                      width: "100%",
+                      height: { xs: "auto", md: "auto" },
+                      width: {
+                        xs: "100%",   
+                        sm: "95%",
+                        md: "100%",
+                      },
+                      mx: "auto",   
                       transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
                       animation: isVisible ? `fadeInUp 0.8s ease-out ${0.1 + index * 0.08}s both` : "none",
                       display: "flex",
@@ -529,7 +534,7 @@ function Products() {
                       sx={{
                         position: "relative",
                         width: "100%",
-                        maxWidth: { xs: "200px", md: "280px" },
+                        maxWidth: { xs: "170px", md: "280px" },
                         mx: "auto",
                         overflow: "hidden",
                         backgroundColor: "rgba(212, 175, 55, 0.08)",
@@ -637,10 +642,10 @@ function Products() {
                     {/* Content */}
                     <Box
                       sx={{
-                        p: 2,
+                        p: { xs: 1.2, md: 2 },
                         display: "flex",
                         flexDirection: "column",
-                        width: { xs: "180px", md: "250px" },
+                        width: { xs: "150px", md: "250px" },
                         overflow: "hidden",
                         flex: 1,
                       }}
