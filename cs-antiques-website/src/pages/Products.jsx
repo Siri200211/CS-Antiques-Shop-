@@ -27,10 +27,32 @@ function Products() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [favorites, setFavorites] = useState({});
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setIsVisible(true);
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/products");
+      if (response.ok) {
+        const data = await response.json();
+        console.log("API Response:", data);
+        setProducts(data.data || data || []);
+      } else {
+        console.error("API Error:", response.status);
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const animationStyles = `
     @keyframes fadeInUp {
@@ -110,205 +132,17 @@ function Products() {
     }
   `;
 
-  const products = [
-    {
-      id: 1,
-      name: "Dutch Box",
-      category: "Decorative",
-      price: "Rs.135,000",
-      image: col1,
-      originalPrice: "Rs. 150,000",
-      description: "Elegant dutch wooden box with brass inlays",
-      condition: "Brand New",
-    },
-    {
-      id: 2,
-      name: "Ath Paththaray",
-      category: "Decorative",
-      price: "Rs. 28,500",
-      originalPrice: "Rs. 34,000",
-      image: col2,
-      description: "Traditional brass water vessel with intricate carvings",
-      condition: "Well-Preserved",
-    },
-    {
-      id: 3,
-      name: "Brass Lamp Shade",
-      category: "Lighting",
-      price: "Rs. 78,000",
-      originalPrice: "Rs. 105,000",
-      image: col3,
-      description: "Art Deco brass table lamp with silk shade",
-      condition: "Fully Restored",
-    },
-    {
-      id: 4,
-      name: "Pettagama with Wooden Horse, Gramophone & Wooden Mirror",
-      category: "Antique Collection",
-      price: "Rs. 350,000",
-      originalPrice: "",
-      image: col4,
-      description: "Rare combination collection featuring wooden pettagama, gramophone, and ornate wooden mirror",
-      condition: "Excellent",
-    },
-    {
-      id: 5,
-      name: "Ebony Wood Brand New Kavichchiya",
-      category: "Premium Furniture",
-      price: "Rs. 12,75,000",
-      originalPrice: "Rs. 13,85,000",
-      image: col5,
-      description: "Premium wooden pettagam with intricate ",
-      condition: "Brand new",
-    },
-    {
-      id: 6,
-      name: "Original Antique Writing Biro Cupboard",
-      category: "Furniture",
-      price: "Rs. 495,000",
-      originalPrice: "Rs. 540,000",
-      image: col6,
-      description: "original antique burma teak wood and ebony wood writing biro cupboard",
-      condition: "Pristine",
-    },
-    {
-      id: 7,
-      name: "Gramophone",
-      category: "Music",
-      price: "Rs. 29,000",
-      originalPrice: "Rs. 38,000",
-      image: col7,
-      description: "Vintage gramophone with ornate wooden body, fully functional",
-      condition: "Fully Functional",
-    },
-    {
-      id: 8,
-      name: "Original Antique Pettagama",
-      category: "Furniture",
-      price: "Rs. 97,000",
-      originalPrice: "Rs. 108,000",
-      image: col8,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Fully Restored",
-    },
-    {
-      id: 9,
-      name: "Ebony Wood Premium Most Valuable Kavichchiya",
-      category: "Premium Furniture",
-      price: "Rs. 18,00,000",
-      originalPrice: "Rs. 19,85,000",
-      image: col9,
-      description: "Exceptionally rare ebony wood furniture piece, hand-carved with premium craftsmanship",
-      condition: "Excellent",
-    },
-    {
-      id: 10,
-      name: "Rose Wood Original Antique Cupboard",
-      category: "Furniture",
-      price: "Rs. 345,000",
-      originalPrice: "Rs. 385,000",
-      image: col10,
-      description: "Original antique rose wood cupboard with traditional hand-carved details",
-      condition: "Pristine",
-    },
-    {
-      id: 11,
-      name: "Table Cupboard",
-      category: "Furniture",
-      price: "Rs. 135,000",
-      originalPrice: "Rs. 152,000",
-      image: col11,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Well-Preserved",
-    },
-    {
-      id: 12,
-      name: "Jack Wood Premium Kavichchiya",
-      category: "Furniture",
-      price: "Rs. 195,000",
-      originalPrice: "Rs. 225,000",
-      image: col12,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "brand new",
-    },
-    {
-      id: 13,
-      name: "Jack Wood Original Antique Dressing Table",
-      category: "Art",
-      price: "Rs. 145,000",
-      originalPrice: "Rs. 170,000",
-      image: col13,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Fully Restored",
-    },
-    {
-      id: 14,
-      name: "Teak Wood Grand Father Chair",
-      category: "Art",
-      price: "Rs. 68,000",
-      originalPrice: "Rs. 76,000",
-      image: col14,
-      description: "Intricately carved teak panel with traditional motifs",
-      era: "1920s",
-      condition: "Good Condition",
-    },
-    {
-      id: 15,
-      name: "Premium Showcase Cupboard Jack Wood",
-      category: "Furniture",
-      price: "Rs. 235,000",
-      originalPrice: "Rs. 255,000",
-      image: col15,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Pristine",
-    },
-    {
-      id: 16,
-      name: "Dutch Box",
-      category: "Art",
-      price: "Rs. 58,000",
-      originalPrice: "Rs. 65,000",
-      image: col16,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: " brand new",
-    },
-    {
-      id: 17,
-      name: "Original Antique Tea Trolly",
-      category: "Art",
-      price: "Rs. 125,000",
-      originalPrice: "Rs. 155,000",
-      image: col17,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Well-Preserved",
-    },
-    {
-      id: 18,
-      name: "White Siyambala Wood Rare Design Coffee Table",
-      category: "Art",
-      price: "Rs. 135,000",
-      originalPrice: "Rs. 152,000",
-      image: col18,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Fully Restored",
-    },
-    {
-      id: 19,
-      name: "White Siyambala Wood Rare Design Kavichchiya",
-      category: "Art",
-      price: "Rs. 975,000",
-      originalPrice: "Rs. 10,80,000",
-      image: col19,
-      description: "Intricately carved teak panel with traditional motifs",
-      condition: "Pristine",
-    }
-  ];
-
   const toggleFavorite = (id) => {
     setFavorites((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
+  };
+
+  const getProductImage = (product) => {
+    if (product.mainImage) return product.mainImage;
+    const images = [col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19];
+    return images[(product.id - 1) % images.length];
   };
 
   return (
@@ -445,6 +279,19 @@ function Products() {
 
         {/* Products Grid */}
         <Box sx={{ py: { xs: 8, md: 12 }, px: { xs: 1.5, md: 4 }, width: "100%", background: "radial-gradient(circle at center, rgba(212, 175, 55, 0.03) 0%, transparent 100%)" }}>
+          {loading ? (
+            <Container maxWidth="xl" sx={{ textAlign: "center", py: 8 }}>
+              <Typography sx={{ color: "#d4af37", fontSize: "1.5rem", fontFamily: "'Playfair Display', serif" }}>
+                Loading Products...
+              </Typography>
+            </Container>
+          ) : products.length === 0 ? (
+            <Container maxWidth="xl" sx={{ textAlign: "center", py: 8 }}>
+              <Typography sx={{ color: "#d4af37", fontSize: "1.5rem", fontFamily: "'Playfair Display', serif" }}>
+                No Products Available
+              </Typography>
+            </Container>
+          ) : (
           <Container
             maxWidth="xl"
             sx={{
@@ -551,7 +398,7 @@ function Products() {
                     >
                       <Box
                         component="img"
-                        src={product.image}
+                        src={getProductImage(product)}
                         alt={product.name}
                         onError={(e) => {
                           e.target.style.display = "none";
@@ -789,6 +636,7 @@ function Products() {
               ))}
             </Grid>
           </Container>
+            )}
         </Box>
       </Box>
     </Box>

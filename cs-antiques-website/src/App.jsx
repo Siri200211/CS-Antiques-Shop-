@@ -13,6 +13,8 @@ import ProductDetail from "./pages/ProductDetail";
 import Gallery from "./pages/Gallery";
 import Location from "./pages/Location";
 import Contact from "./pages/Contact";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -20,20 +22,34 @@ function App() {
       <CssBaseline />
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <Router>
-          <Navbar />
-          <Box component="main" sx={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/location" element={<Location />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
-          </Box>
-          <Footer />
-          <FloatingWhatsApp />
+          <Routes>
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+            {/* Public Routes */}
+            <Route
+              path="/*"
+              element={
+                <>
+                  <Navbar />
+                  <Box component="main" sx={{ flex: 1 }}>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/products" element={<Products />} />
+                      <Route path="/product/:id" element={<ProductDetail />} />
+                      <Route path="/gallery" element={<Gallery />} />
+                      <Route path="/location" element={<Location />} />
+                      <Route path="/contact" element={<Contact />} />
+                    </Routes>
+                  </Box>
+                  <Footer />
+                  <FloatingWhatsApp />
+                </>
+              }
+            />
+          </Routes>
         </Router>
       </Box>
     </ThemeProvider>

@@ -186,6 +186,30 @@ function Navbar() {
                 {item.label}
               </Button>
             ))}
+
+            {/* Admin Login Button */}
+            <Button
+              component={RouterLink}
+              to="/admin/login"
+              sx={{
+                background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                color: "#0b0b0b",
+                fontWeight: 700,
+                px: 2.5,
+                py: 1,
+                borderRadius: "6px",
+                textTransform: "uppercase",
+                fontSize: "0.85rem",
+                letterSpacing: "0.08em",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  boxShadow: "0 8px 25px rgba(212, 175, 55, 0.4)",
+                  transform: "translateY(-2px)",
+                },
+              }}
+            >
+              Admin
+            </Button>
           </Box>
 
           {/* Mobile Menu Button */}
