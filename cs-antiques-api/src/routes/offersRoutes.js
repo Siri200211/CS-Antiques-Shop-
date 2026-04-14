@@ -79,9 +79,10 @@ router.post("/", requireAuth, upload.single("image"), async (req, res, next) => 
     const { title, description, promoCode, discount, validFrom, validUntil } = req.body;
     let imageUrl = req.body.imageUrl;
 
-    // If file uploaded, use that
+    // If file uploaded, convert to base64 data URL
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      const base64 = req.file.buffer.toString("base64");
+      imageUrl = `data:${req.file.mimetype};base64,${base64}`;
     }
 
     // Validate
@@ -104,7 +105,7 @@ router.post("/", requireAuth, upload.single("image"), async (req, res, next) => 
       .request()
       .input("title", sql.NVarChar, title)
       .input("description", sql.NVarChar, description || null)
-      .input("imageUrl", sql.NVarChar, imageUrl)
+      .input("imageUrl", sql.NVarChar(sql.MAX), imageUrl)
       .input("promoCode", sql.NVarChar, promoCode || null)
       .input("discount", sql.Int, discount ? Number(discount) : null)
       .input("validFrom", sql.DateTime2, validFrom)
@@ -137,9 +138,10 @@ router.put("/:id", requireAuth, upload.single("image"), async (req, res, next) =
     const { title, description, promoCode, discount, validFrom, validUntil, isActive } = req.body;
     let imageUrl = req.body.imageUrl;
 
-    // If file uploaded, use that
+    // If file uploaded, convert to base64 data URL
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      const base64 = req.file.buffer.toString("base64");
+      imageUrl = `data:${req.file.mimetype};base64,${base64}`;
     }
 
     const pool = await getPool();
@@ -160,7 +162,7 @@ router.put("/:id", requireAuth, upload.single("image"), async (req, res, next) =
     }
     if (imageUrl) {
       updates.push("imageUrl = @imageUrl");
-      params.imageUrl = sql.NVarChar;
+      params.imageUrl = sql.NVarChar(sql.MAX);
       values["@imageUrl"] = imageUrl;
     }
     if (promoCode !== undefined) {
