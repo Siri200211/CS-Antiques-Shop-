@@ -26,13 +26,24 @@ import {
   Grid,
   Alert,
   CircularProgress,
+  Tabs,
+  Tab,
+  Chip,
 } from "@mui/material";
-import { Logout, Edit, Delete, Add, Dashboard, Settings } from "@mui/icons-material";
+import { Logout, Edit, Delete, Add, Dashboard, Settings, PersonAdd, LockReset, AdminPanelSettings } from "@mui/icons-material";
 import { apiUrl } from "../config/api";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [openNewAdminDialog, setOpenNewAdminDialog] = useState(false);
+  const [openResetPasswordDialog, setOpenResetPasswordDialog] = useState(false);
+  const [selectedAdminId, setSelectedAdminId] = useState(null);
+  const [newAdminForm, setNewAdminForm] = useState({ email: "", password: "", role: "admin" });
+  const [resetPasswordForm, setResetPasswordForm] = useState({ newPassword: "", confirmPassword: "" });
+  const [adminActionLoading, setAdminActionLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -61,6 +72,88 @@ function AdminDashboard() {
     }
   }
 
+  // Fetch all admin users
+  async function fetchAdminUsers() {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(apiUrl("/api/auth/admin-users"), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setAdminUsers(data.data || []);
+    } catch (error) {
+      console.error("Error fetching admin users:", error);
+    }
+  }
+
+  // Create new admin user
+  const handleCreateAdmin = async () => {
+    if (!newAdminForm.email || !newAdminForm.password) {
+      alert("Email and password are required");
+      return;
+    }
+    if (newAdminForm.password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    setAdminActionLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(apiUrl("/api/auth/admin-users"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(newAdminForm),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Admin user created successfully!");
+        setOpenNewAdminDialog(false);
+        setNewAdminForm({ email: "", password: "", role: "admin" });
+        fetchAdminUsers();
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      alert("Error: " + error.message);
+    } finally {
+      setAdminActionLoading(false);
+    }
+  };
+
+  // Reset admin password
+  const handleResetPassword = async () => {
+    if (!resetPasswordForm.newPassword || resetPasswordForm.newPassword.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    if (resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    setAdminActionLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(apiUrl(`/api/auth/admin-users/${selectedAdminId}/reset-password`), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ newPassword: resetPasswordForm.newPassword }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Password reset successfully!");
+        setOpenResetPasswordDialog(false);
+        setResetPasswordForm({ newPassword: "", confirmPassword: "" });
+        setSelectedAdminId(null);
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      alert("Error: " + error.message);
+    } finally {
+      setAdminActionLoading(false);
+    }
+  };
+
   // Check authentication on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -74,6 +167,7 @@ function AdminDashboard() {
     const userData = JSON.parse(userStr);
     setUser(userData);
     fetchProducts();
+    fetchAdminUsers();
   }, [navigate]);
 
   // Handle logout
@@ -314,124 +408,159 @@ function AdminDashboard() {
 
       {/* Main Content */}
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        {/* Header */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
-          <Typography
-            sx={{
-              fontSize: "2rem",
-              fontWeight: 800,
-              color: "#d4af37",
-              fontFamily: "'Playfair Display', serif",
-            }}
-          >
-            Products Management
-          </Typography>
-          <Button
-            startIcon={<Add />}
-            onClick={() => handleOpenDialog()}
-            sx={{
-              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-              color: "#0b0b0b",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              "&:hover": {
-                boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)",
-              },
-            }}
-          >
-            Add Product
-          </Button>
-        </Box>
 
-        {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card
-              sx={{
-                background: "linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)",
-                border: "1px solid rgba(212, 175, 55, 0.3)",
-                p: 2,
-              }}
-            >
-              <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem" }}>
-                Total Products
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "2rem",
-                  fontWeight: 800,
-                  color: "#d4af37",
-                  fontFamily: "'Playfair Display', serif",
-                }}
-              >
-                {products.length}
-              </Typography>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Products Table */}
-        <TableContainer
-          component={Paper}
+        {/* Tabs */}
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => setActiveTab(v)}
           sx={{
-            background: "linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)",
-            border: "1px solid rgba(212, 175, 55, 0.3)",
+            mb: 4,
+            borderBottom: "1px solid rgba(212, 175, 55, 0.3)",
+            "& .MuiTab-root": { color: "#b0b0b0", fontWeight: 600, textTransform: "uppercase" },
+            "& .Mui-selected": { color: "#d4af37 !important" },
+            "& .MuiTabs-indicator": { backgroundColor: "#d4af37" },
           }}
         >
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(212, 175, 55, 0.15)" }}>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>ID</TableCell>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Name</TableCell>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Category</TableCell>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="right">
-                  Price
-                </TableCell>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Condition</TableCell>
-                <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="center">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow
-                  key={product.id}
+          <Tab icon={<Dashboard />} iconPosition="start" label="Products" />
+          <Tab icon={<AdminPanelSettings />} iconPosition="start" label="Admin Users" />
+        </Tabs>
+
+        {/* ═══════════ PRODUCTS TAB ═══════════ */}
+        {activeTab === 0 && (
+          <>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+              <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
+                Products Management
+              </Typography>
+              <Button
+                startIcon={<Add />}
+                onClick={() => handleOpenDialog()}
+                sx={{
+                  background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                  color: "#0b0b0b",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  "&:hover": { boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)" },
+                }}
+              >
+                Add Product
+              </Button>
+            </Box>
+
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card sx={{ background: "rgba(212, 175, 55, 0.08)", border: "1px solid rgba(212, 175, 55, 0.3)", p: 2 }}>
+                  <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem" }}>Total Products</Typography>
+                  <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
+                    {products.length}
+                  </Typography>
+                </Card>
+              </Grid>
+            </Grid>
+
+            <TableContainer component={Paper} sx={{ background: "rgba(212, 175, 55, 0.05)", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "rgba(212, 175, 55, 0.15)" }}>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>ID</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Name</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Category</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="right">Price</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Condition</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="center">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {products.map((product) => (
+                    <TableRow key={product.id} sx={{ "&:hover": { backgroundColor: "rgba(212, 175, 55, 0.08)" }, borderBottom: "1px solid rgba(212, 175, 55, 0.2)" }}>
+                      <TableCell sx={{ color: "#eaeaea" }}>{product.id}</TableCell>
+                      <TableCell sx={{ color: "#eaeaea" }}>{product.name}</TableCell>
+                      <TableCell sx={{ color: "#b0b0b0" }}>{product.category}</TableCell>
+                      <TableCell sx={{ color: "#eaeaea" }} align="right">Rs. {product.price?.toLocaleString()}</TableCell>
+                      <TableCell sx={{ color: "#b0b0b0" }}>{product.condition}</TableCell>
+                      <TableCell align="center">
+                        <IconButton size="small" onClick={() => handleOpenDialog(product)} sx={{ color: "#4caf50" }}><Edit /></IconButton>
+                        <IconButton size="small" onClick={() => handleDeleteProduct(product.id)} sx={{ color: "#f44336" }}><Delete /></IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+
+        {/* ═══════════ ADMIN USERS TAB ═══════════ */}
+        {activeTab === 1 && (
+          <>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+              <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
+                Admin Users
+              </Typography>
+              {user?.role === "admin" && (
+                <Button
+                  startIcon={<PersonAdd />}
+                  onClick={() => setOpenNewAdminDialog(true)}
                   sx={{
-                    "&:hover": {
-                      backgroundColor: "rgba(212, 175, 55, 0.08)",
-                    },
-                    borderBottom: "1px solid rgba(212, 175, 55, 0.2)",
+                    background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                    color: "#0b0b0b",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    "&:hover": { boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)" },
                   }}
                 >
+                  Add Admin User
+                </Button>
+              )}
+            </Box>
+
+            <TableContainer component={Paper} sx={{ background: "rgba(212, 175, 55, 0.05)", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "rgba(212, 175, 55, 0.15)" }}>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>ID</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Email</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Role</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Status</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Created</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="center">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {adminUsers.map((admin) => (
+                    <TableRow key={admin.id} sx={{ "&:hover": { backgroundColor: "rgba(212, 175, 55, 0.08)" }, borderBottom: "1px solid rgba(212, 175, 55, 0.2)" }}>
+                      <TableCell sx={{ color: "#eaeaea" }}>{admin.id}</TableCell>
+                      <TableCell sx={{ color: "#eaeaea" }}>{admin.email}</TableCell>
+                      <TableCell>
+                        <Chip label={admin.role} size="small" sx={{ backgroundColor: "rgba(212,175,55,0.2)", color: "#d4af37", fontWeight: 700 }} />
+                      </TableCell>
+                      <TableCell>
+                        <Chip label={admin.isActive ? "Active" : "Inactive"} size="small" sx={{ backgroundColor: admin.isActive ? "rgba(76,175,80,0.2)" : "rgba(244,67,54,0.2)", color: admin.isActive ? "#4caf50" : "#f44336", fontWeight: 700 }} />
+                      </TableCell>
+                      <TableCell sx={{ color: "#b0b0b0", fontSize: "0.85rem" }}>
+                        {new Date(admin.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell align="center">
+                        {user?.role === "admin" && (
+                          <IconButton
+                            size="small"
+                            title="Reset Password"
+                            onClick={() => { setSelectedAdminId(admin.id); setResetPasswordForm({ newPassword: "", confirmPassword: "" }); setOpenResetPasswordDialog(true); }}
+                            sx={{ color: "#ff9800" }}
+                          >
+                            <LockReset />
+                          </IconButton>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
                   <TableCell sx={{ color: "#eaeaea" }}>{product.id}</TableCell>
                   <TableCell sx={{ color: "#eaeaea" }}>{product.name}</TableCell>
-                  <TableCell sx={{ color: "#b0b0b0" }}>{product.category}</TableCell>
-                  <TableCell sx={{ color: "#eaeaea" }} align="right">
-                    Rs. {product.price?.toLocaleString()}
-                  </TableCell>
-                  <TableCell sx={{ color: "#b0b0b0" }}>{product.condition}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleOpenDialog(product)}
-                      sx={{ color: "#4caf50" }}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDeleteProduct(product.id)}
-                      sx={{ color: "#f44336" }}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </Container>
 
       {/* Add/Edit Product Dialog */}
@@ -442,8 +571,9 @@ function AdminDashboard() {
         fullWidth
         PaperProps={{
           sx: {
-            background: "linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%)",
-            border: "1px solid rgba(212, 175, 55, 0.3)",
+            backgroundColor: "#1a1a1a",
+            border: "1px solid rgba(212, 175, 55, 0.4)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
           },
         }}
       >
@@ -652,22 +782,77 @@ function AdminDashboard() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={handleCloseDialog} sx={{ color: "#b0b0b0" }}>
-            Cancel
-          </Button>
+          <Button onClick={handleCloseDialog} sx={{ color: "#b0b0b0" }}>Cancel</Button>
           <Button
             onClick={handleSaveProduct}
             disabled={uploadingImage}
-            sx={{
-              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-              color: "#0b0b0b",
-              fontWeight: 700,
-              "&:disabled": {
-                opacity: 0.6,
-              },
-            }}
+            sx={{ background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)", color: "#0b0b0b", fontWeight: 700, "&:disabled": { opacity: 0.6 } }}
           >
             {uploadingImage ? "Uploading..." : editingProduct ? "Update" : "Create"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Create New Admin User Dialog */}
+      <Dialog open={openNewAdminDialog} onClose={() => setOpenNewAdminDialog(false)} maxWidth="sm" fullWidth
+        PaperProps={{ sx: { backgroundColor: "#1a1a1a", border: "1px solid rgba(212, 175, 55, 0.4)", boxShadow: "0 20px 60px rgba(0,0,0,0.8)" } }}>
+        <DialogTitle sx={{ color: "#d4af37", fontWeight: 700, display: "flex", alignItems: "center", gap: 1 }}>
+          <PersonAdd /> Create New Admin User
+        </DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
+          <TextField fullWidth label="Email Address" type="email"
+            value={newAdminForm.email}
+            onChange={(e) => setNewAdminForm({ ...newAdminForm, email: e.target.value })}
+            sx={{ "& .MuiOutlinedInput-root": { color: "#eaeaea", "& fieldset": { borderColor: "rgba(212, 175, 55, 0.3)" } }, "& .MuiInputLabel-root": { color: "#d4af37" } }}
+          />
+          <TextField fullWidth label="Password (min 6 characters)" type="password"
+            value={newAdminForm.password}
+            onChange={(e) => setNewAdminForm({ ...newAdminForm, password: e.target.value })}
+            sx={{ "& .MuiOutlinedInput-root": { color: "#eaeaea", "& fieldset": { borderColor: "rgba(212, 175, 55, 0.3)" } }, "& .MuiInputLabel-root": { color: "#d4af37" } }}
+          />
+          <TextField fullWidth label="Role" select SelectProps={{ native: true }}
+            value={newAdminForm.role}
+            onChange={(e) => setNewAdminForm({ ...newAdminForm, role: e.target.value })}
+            sx={{ "& .MuiOutlinedInput-root": { color: "#eaeaea", "& fieldset": { borderColor: "rgba(212, 175, 55, 0.3)" } }, "& .MuiInputLabel-root": { color: "#d4af37" }, "& select": { color: "#eaeaea", backgroundColor: "#1a1a1a" } }}
+          >
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </TextField>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setOpenNewAdminDialog(false)} sx={{ color: "#b0b0b0" }}>Cancel</Button>
+          <Button onClick={handleCreateAdmin} disabled={adminActionLoading}
+            sx={{ background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)", color: "#0b0b0b", fontWeight: 700 }}>
+            {adminActionLoading ? "Creating..." : "Create Admin"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={openResetPasswordDialog} onClose={() => setOpenResetPasswordDialog(false)} maxWidth="sm" fullWidth
+        PaperProps={{ sx: { backgroundColor: "#1a1a1a", border: "1px solid rgba(212, 175, 55, 0.4)", boxShadow: "0 20px 60px rgba(0,0,0,0.8)" } }}>
+        <DialogTitle sx={{ color: "#d4af37", fontWeight: 700, display: "flex", alignItems: "center", gap: 1 }}>
+          <LockReset /> Reset Password
+        </DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
+          <TextField fullWidth label="New Password (min 6 characters)" type="password"
+            value={resetPasswordForm.newPassword}
+            onChange={(e) => setResetPasswordForm({ ...resetPasswordForm, newPassword: e.target.value })}
+            sx={{ "& .MuiOutlinedInput-root": { color: "#eaeaea", "& fieldset": { borderColor: "rgba(212, 175, 55, 0.3)" } }, "& .MuiInputLabel-root": { color: "#d4af37" } }}
+          />
+          <TextField fullWidth label="Confirm New Password" type="password"
+            value={resetPasswordForm.confirmPassword}
+            onChange={(e) => setResetPasswordForm({ ...resetPasswordForm, confirmPassword: e.target.value })}
+            error={resetPasswordForm.confirmPassword !== "" && resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword}
+            helperText={resetPasswordForm.confirmPassword !== "" && resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword ? "Passwords do not match" : ""}
+            sx={{ "& .MuiOutlinedInput-root": { color: "#eaeaea", "& fieldset": { borderColor: "rgba(212, 175, 55, 0.3)" } }, "& .MuiInputLabel-root": { color: "#d4af37" } }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setOpenResetPasswordDialog(false)} sx={{ color: "#b0b0b0" }}>Cancel</Button>
+          <Button onClick={handleResetPassword} disabled={adminActionLoading}
+            sx={{ background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)", color: "#0b0b0b", fontWeight: 700 }}>
+            {adminActionLoading ? "Resetting..." : "Reset Password"}
           </Button>
         </DialogActions>
       </Dialog>
