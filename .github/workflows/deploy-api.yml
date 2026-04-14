@@ -1,0 +1,39 @@
+name: Deploy API to Azure App Service
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'cs-antiques-api/**'
+      - '.github/workflows/deploy-api.yml'
+
+env:
+  AZURE_WEBAPP_NAME: cs-antiques-api-prod
+  NODE_VERSION: '22.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ./cs-antiques-api
+        run: npm install
+
+      - name: Build
+        working-directory: ./cs-antiques-api
+        run: npm run check
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./cs-antiques-api

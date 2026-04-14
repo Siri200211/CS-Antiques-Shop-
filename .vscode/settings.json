@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/015309e9-dc9f-435f-8342-b77cee573a21/resourceGroups/csQntiques/providers/Microsoft.Web/sites/cs-antiques-api-prod",
+    "appService.deploySubpath": "."
+}
