@@ -6,7 +6,7 @@ function BrandStats() {
   const navigate = useNavigate();
   const stats = [
     { 
-      value: "2019", 
+      value: "2020", 
       label: "Established",
       description: "Since our inception"
     },
@@ -180,7 +180,7 @@ function BrandStats() {
               opacity: 0,
             }}
           >
-            Serving passionate collectors and antique enthusiasts across Sri Lanka with uncompromising quality and authentic pieces since 2019
+            Serving passionate collectors and antique enthusiasts across Sri Lanka with uncompromising quality and authentic pieces since 2020
           </Typography>
         </Box>
 

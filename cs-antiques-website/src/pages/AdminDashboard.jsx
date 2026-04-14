@@ -258,7 +258,7 @@ function AdminDashboard() {
   if (!user) return null;
 
   return (
-    <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh" }}>
+    <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100%" }}>
       {/* Top Navigation */}
       <AppBar
         position="static"

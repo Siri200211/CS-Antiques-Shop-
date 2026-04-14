@@ -58,6 +58,7 @@ function AdminLogin() {
       sx={{
         backgroundColor: "#0b0b0b",
         minHeight: "100vh",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

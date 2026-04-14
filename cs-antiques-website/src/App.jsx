@@ -20,12 +20,12 @@ function App() {
   return (
     <ThemeProvider theme={luxuryTheme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%" }}>
         <Router>
           <Routes>
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            {/* Admin Routes - Full width, no navbar/footer */}
+            <Route path="/admin/login" element={<Box sx={{ width: "100%" }}><AdminLogin /></Box>} />
+            <Route path="/admin/dashboard" element={<Box sx={{ width: "100%" }}><AdminDashboard /></Box>} />
 
             {/* Public Routes */}
             <Route
