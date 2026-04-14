@@ -63,7 +63,7 @@ function ProductDetail() {
     );
   }
 
-  const baseUrl = import.meta.env.VITE_BASE_URL ;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL ;
   const productPageUrl = `${baseUrl}/product/${product.id}`;
 
   return (
