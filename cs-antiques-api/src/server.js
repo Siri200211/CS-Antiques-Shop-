@@ -32,6 +32,7 @@ const setupCors = () => {
   // For production, restrict to your domain
   const allowedOrigins = isProduction 
     ? [
+        "https://wonderful-pond-0f05e1700.7.azurestaticapps.net",
         "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app",
         "https://yourdomain.com", // Add your production domain
       ]
