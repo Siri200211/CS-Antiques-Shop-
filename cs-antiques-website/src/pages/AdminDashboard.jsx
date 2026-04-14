@@ -30,7 +30,7 @@ import {
   Tab,
   Chip,
 } from "@mui/material";
-import { Logout, Edit, Delete, Add, Dashboard, Settings, PersonAdd, LockReset, AdminPanelSettings } from "@mui/icons-material";
+import { Logout, Edit, Delete, Add, Dashboard, Settings, PersonAdd, LockReset, AdminPanelSettings, LocalOffer } from "@mui/icons-material";
 import { apiUrl } from "../config/api";
 
 function AdminDashboard() {
@@ -60,6 +60,18 @@ function AdminDashboard() {
     condition: "",
     mainImage: "",
   });
+  const [offers, setOffers] = useState([]);
+  const [openOffersDialog, setOpenOffersDialog] = useState(false);
+  const [editingOffer, setEditingOffer] = useState(null);
+  const [offersFormData, setOffersFormData] = useState({
+    title: "",
+    description: "",
+    promoCode: "",
+    discount: "",
+    validFrom: "",
+    validUntil: "",
+    imageUrl: "",
+  });
 
   // Fetch all products
   async function fetchProducts() {
@@ -69,6 +81,20 @@ function AdminDashboard() {
       setProducts(data.data || []);
     } catch (error) {
       console.error("Error fetching products:", error);
+    }
+  }
+
+  // Fetch all offers
+  async function fetchOffers() {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(apiUrl("/api/offers/admin/all"), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setOffers(data.data || []);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
     }
   }
 
@@ -169,6 +195,7 @@ function AdminDashboard() {
       setUser(userData);
       fetchProducts();
       fetchAdminUsers();
+      fetchOffers();
     } catch {
       // Corrupted data - clear and redirect to login
       localStorage.removeItem("authToken");
@@ -356,6 +383,144 @@ function AdminDashboard() {
     }
   };
 
+  // Open add/edit offers dialog
+  const handleOpenOffersDialog = (offer = null) => {
+    if (offer) {
+      setEditingOffer(offer);
+      setOffersFormData({
+        title: offer.title,
+        description: offer.description || "",
+        promoCode: offer.promoCode || "",
+        discount: offer.discount || "",
+        validFrom: offer.validFrom ? offer.validFrom.split("T")[0] : "",
+        validUntil: offer.validUntil ? offer.validUntil.split("T")[0] : "",
+        imageUrl: offer.imageUrl || "",
+      });
+      setImagePreview(offer.imageUrl || null);
+    } else {
+      setEditingOffer(null);
+      setOffersFormData({
+        title: "",
+        description: "",
+        promoCode: "",
+        discount: "",
+        validFrom: "",
+        validUntil: "",
+        imageUrl: "",
+      });
+      setImagePreview(null);
+    }
+    setImageFile(null);
+    setOpenOffersDialog(true);
+  };
+
+  const handleCloseOffersDialog = () => {
+    setOpenOffersDialog(false);
+    setEditingOffer(null);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  // Handle save offer
+  const handleSaveOffer = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!offersFormData.title || !offersFormData.promoCode || !offersFormData.discount || !offersFormData.validFrom || !offersFormData.validUntil) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    try {
+      let imagePath = offersFormData.imageUrl;
+      
+      // Upload new image if selected
+      if (imageFile) {
+        const formDataObj = new FormData();
+        formDataObj.append("image", imageFile);
+
+        const uploadResponse = await fetch(apiUrl("/api/products/upload-image"), {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataObj,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.success) {
+          imagePath = uploadData.data.imagePath;
+        } else {
+          alert("Error uploading image: " + uploadData.message);
+          return;
+        }
+      }
+
+      const url = editingOffer
+        ? apiUrl(`/api/offers/${editingOffer.id}`)
+        : apiUrl("/api/offers");
+
+      const method = editingOffer ? "PUT" : "POST";
+
+      const offerData = {
+        title: offersFormData.title,
+        description: offersFormData.description,
+        promoCode: offersFormData.promoCode,
+        discount: parseInt(offersFormData.discount) || 0,
+        validFrom: new Date(offersFormData.validFrom).toISOString(),
+        validUntil: new Date(offersFormData.validUntil).toISOString(),
+        imageUrl: imagePath,
+      };
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(offerData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        fetchOffers();
+        handleCloseOffersDialog();
+        alert(editingOffer ? "Offer updated!" : "Offer created!");
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      alert("Error saving offer: " + error.message);
+    }
+  };
+
+  // Handle delete offer
+  const handleDeleteOffer = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this offer?")) return;
+
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await fetch(apiUrl(`/api/offers/${id}`), {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        fetchOffers();
+        alert("Offer deleted!");
+      } else {
+        alert("Error: " + data.message);
+      }
+    } catch (error) {
+      alert("Error deleting offer: " + error.message);
+    }
+  };
+
   if (!user) return (
     <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <CircularProgress sx={{ color: "#d4af37" }} />
@@ -433,6 +598,7 @@ function AdminDashboard() {
           }}
         >
           <Tab icon={<Dashboard />} iconPosition="start" label="Products" />
+          <Tab icon={<LocalOffer />} iconPosition="start" label="Offers" />
           <Tab icon={<AdminPanelSettings />} iconPosition="start" label="Admin Users" />
         </Tabs>
 
@@ -501,28 +667,113 @@ function AdminDashboard() {
           </>
         )}
 
-        {/* ═══════════ ADMIN USERS TAB ═══════════ */}
+        {/* ═══════════ OFFERS TAB ═══════════ */}
         {activeTab === 1 && (
+          <>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
+              <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
+                Offers & Promotions
+              </Typography>
+              <Button
+                startIcon={<Add />}
+                onClick={() => handleOpenOffersDialog()}
+                sx={{
+                  background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                  color: "#0b0b0b",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  "&:hover": { boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)" },
+                }}
+              >
+                Add Offer
+              </Button>
+            </Box>
+
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card sx={{ background: "rgba(212, 175, 55, 0.08)", border: "1px solid rgba(212, 175, 55, 0.3)", p: 2 }}>
+                  <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem" }}>Total Offers</Typography>
+                  <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
+                    {offers.length}
+                  </Typography>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <Card sx={{ background: "rgba(212, 175, 55, 0.08)", border: "1px solid rgba(212, 175, 55, 0.3)", p: 2 }}>
+                  <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem" }}>Active Offers</Typography>
+                  <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#4caf50", fontFamily: "'Playfair Display', serif" }}>
+                    {offers.filter(o => o.isActive).length}
+                  </Typography>
+                </Card>
+              </Grid>
+            </Grid>
+
+            <TableContainer component={Paper} sx={{ background: "rgba(212, 175, 55, 0.05)", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: "rgba(212, 175, 55, 0.15)" }}>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>ID</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Title</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Promo Code</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="center">Discount</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Valid Until</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>Status</TableCell>
+                    <TableCell sx={{ color: "#d4af37", fontWeight: 700 }} align="center">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {offers.map((offer) => (
+                    <TableRow key={offer.id} sx={{ "&:hover": { backgroundColor: "rgba(212, 175, 55, 0.08)" }, borderBottom: "1px solid rgba(212, 175, 55, 0.2)" }}>
+                      <TableCell sx={{ color: "#eaeaea" }}>{offer.id}</TableCell>
+                      <TableCell sx={{ color: "#eaeaea" }}>{offer.title}</TableCell>
+                      <TableCell sx={{ color: "#d4af37", fontWeight: 700 }}>{offer.promoCode}</TableCell>
+                      <TableCell sx={{ color: "#eaeaea" }} align="center">{offer.discount}%</TableCell>
+                      <TableCell sx={{ color: "#b0b0b0", fontSize: "0.85rem" }}>
+                        {new Date(offer.validUntil).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={offer.isActive ? "Active" : "Inactive"}
+                          size="small"
+                          sx={{
+                            backgroundColor: offer.isActive ? "rgba(76,175,80,0.2)" : "rgba(244,67,54,0.2)",
+                            color: offer.isActive ? "#4caf50" : "#f44336",
+                            fontWeight: 700,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton size="small" onClick={() => handleOpenOffersDialog(offer)} sx={{ color: "#4caf50" }}><Edit /></IconButton>
+                        <IconButton size="small" onClick={() => handleDeleteOffer(offer.id)} sx={{ color: "#f44336" }}><Delete /></IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
+
+        {/* ═══════════ ADMIN USERS TAB ═══════════ */}
+        {activeTab === 2 && (
           <>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
               <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "#d4af37", fontFamily: "'Playfair Display', serif" }}>
                 Admin Users
               </Typography>
-              {user?.role === "admin" && (
-                <Button
-                  startIcon={<PersonAdd />}
-                  onClick={() => setOpenNewAdminDialog(true)}
-                  sx={{
-                    background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-                    color: "#0b0b0b",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    "&:hover": { boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)" },
-                  }}
-                >
-                  Add Admin User
-                </Button>
-              )}
+              <Button
+                startIcon={<PersonAdd />}
+                onClick={() => setOpenNewAdminDialog(true)}
+                sx={{
+                  background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+                  color: "#0b0b0b",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  "&:hover": { boxShadow: "0 10px 30px rgba(212, 175, 55, 0.4)" },
+                }}
+              >
+                Add Admin User
+              </Button>
             </Box>
 
             <TableContainer component={Paper} sx={{ background: "rgba(212, 175, 55, 0.05)", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
@@ -552,16 +803,14 @@ function AdminDashboard() {
                         {new Date(admin.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell align="center">
-                        {user?.role === "admin" && (
-                          <IconButton
-                            size="small"
-                            title="Reset Password"
-                            onClick={() => { setSelectedAdminId(admin.id); setResetPasswordForm({ newPassword: "", confirmPassword: "" }); setOpenResetPasswordDialog(true); }}
-                            sx={{ color: "#ff9800" }}
-                          >
-                            <LockReset />
-                          </IconButton>
-                        )}
+                        <IconButton
+                          size="small"
+                          title="Reset Password"
+                          onClick={() => { setSelectedAdminId(admin.id); setResetPasswordForm({ newPassword: "", confirmPassword: "" }); setOpenResetPasswordDialog(true); }}
+                          sx={{ color: "#ff9800" }}
+                        >
+                          <LockReset />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -833,6 +1082,225 @@ function AdminDashboard() {
           <Button onClick={handleCreateAdmin} disabled={adminActionLoading}
             sx={{ background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)", color: "#0b0b0b", fontWeight: 700 }}>
             {adminActionLoading ? "Creating..." : "Create Admin"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add/Edit Offer Dialog */}
+      <Dialog
+        open={openOffersDialog}
+        onClose={handleCloseOffersDialog}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            backgroundColor: "#1a1a1a",
+            border: "1px solid rgba(212, 175, 55, 0.4)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: "#d4af37", fontWeight: 700 }}>
+          {editingOffer ? "Edit Offer" : "Add New Offer"}
+        </DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
+          <TextField
+            fullWidth
+            label="Offer Title"
+            value={offersFormData.title}
+            onChange={(e) => setOffersFormData({ ...offersFormData, title: e.target.value })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Description"
+            multiline
+            rows={2}
+            value={offersFormData.description}
+            onChange={(e) => setOffersFormData({ ...offersFormData, description: e.target.value })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Promo Code"
+            value={offersFormData.promoCode}
+            onChange={(e) => setOffersFormData({ ...offersFormData, promoCode: e.target.value.toUpperCase() })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Discount (%)"
+            type="number"
+            inputProps={{ min: 0, max: 100 }}
+            value={offersFormData.discount}
+            onChange={(e) => setOffersFormData({ ...offersFormData, discount: e.target.value })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Valid From"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={offersFormData.validFrom}
+            onChange={(e) => setOffersFormData({ ...offersFormData, validFrom: e.target.value })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Valid Until"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={offersFormData.validUntil}
+            onChange={(e) => setOffersFormData({ ...offersFormData, validUntil: e.target.value })}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                color: "#eaeaea",
+                "& fieldset": {
+                  borderColor: "rgba(212, 175, 55, 0.3)",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#d4af37",
+              },
+            }}
+          />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+            <Typography sx={{ color: "#d4af37", fontWeight: 600 }}>Upload Promotional Image</Typography>
+            <Box
+              sx={{
+                border: "2px dashed rgba(212, 175, 55, 0.4)",
+                borderRadius: "8px",
+                p: 2,
+                textAlign: "center",
+                cursor: "pointer",
+                transition: "all 0.3s",
+                "&:hover": {
+                  borderColor: "rgba(212, 175, 55, 0.7)",
+                  backgroundColor: "rgba(212, 175, 55, 0.05)",
+                },
+              }}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: "none" }}
+                id="offer-image-upload"
+              />
+              <label htmlFor="offer-image-upload" style={{ cursor: "pointer", display: "block" }}>
+                <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem", mb: 1 }}>
+                  Click to upload or drag and drop
+                </Typography>
+                <Typography sx={{ color: "#888", fontSize: "0.8rem" }}>
+                  PNG, JPG, GIF, WEBP up to 5MB
+                </Typography>
+              </label>
+            </Box>
+            {(imagePreview || offersFormData.imageUrl) && (
+              <Box
+                sx={{
+                  position: "relative",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  backgroundColor: "#000",
+                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                }}
+              >
+                <img
+                  src={imagePreview || apiUrl(offersFormData.imageUrl)}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                  }}
+                />
+                {uploadingImage && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    <CircularProgress size={40} sx={{ color: "#d4af37" }} />
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={handleCloseOffersDialog} sx={{ color: "#b0b0b0" }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveOffer}
+            disabled={uploadingImage}
+            sx={{
+              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+              color: "#0b0b0b",
+              fontWeight: 700,
+              "&:disabled": { opacity: 0.6 },
+            }}
+          >
+            {uploadingImage ? "Uploading..." : editingOffer ? "Update" : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
