@@ -20,38 +20,36 @@ function App() {
   return (
     <ThemeProvider theme={luxuryTheme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%" }}>
-        <Router>
-          <Routes>
-            {/* Admin Routes - Full width, no navbar/footer */}
-            <Route path="/admin/login" element={<Box sx={{ width: "100%" }}><AdminLogin /></Box>} />
-            <Route path="/admin/dashboard" element={<Box sx={{ width: "100%" }}><AdminDashboard /></Box>} />
+      <Router>
+        <Routes>
+          {/* Admin Routes - Completely isolated, no flex layout wrapper */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-            {/* Public Routes */}
-            <Route
-              path="/*"
-              element={
-                <>
-                  <Navbar />
-                  <Box component="main" sx={{ flex: 1 }}>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/products" element={<Products />} />
-                      <Route path="/product/:id" element={<ProductDetail />} />
-                      <Route path="/gallery" element={<Gallery />} />
-                      <Route path="/location" element={<Location />} />
-                      <Route path="/contact" element={<Contact />} />
-                    </Routes>
-                  </Box>
-                  <Footer />
-                  <FloatingWhatsApp />
-                </>
-              }
-            />
-          </Routes>
-        </Router>
-      </Box>
+          {/* Public Routes */}
+          <Route
+            path="/*"
+            element={
+              <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                <Navbar />
+                <Box component="main" sx={{ flex: 1 }}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/location" element={<Location />} />
+                    <Route path="/contact" element={<Contact />} />
+                  </Routes>
+                </Box>
+                <Footer />
+                <FloatingWhatsApp />
+              </Box>
+            }
+          />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 }
