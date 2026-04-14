@@ -570,8 +570,6 @@ function AdminDashboard() {
             </TableContainer>
           </>
         )}
-                  <TableCell sx={{ color: "#eaeaea" }}>{product.id}</TableCell>
-                  <TableCell sx={{ color: "#eaeaea" }}>{product.name}</TableCell>
       </Container>
 
       {/* Add/Edit Product Dialog */}
