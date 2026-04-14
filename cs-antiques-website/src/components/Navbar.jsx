@@ -12,13 +12,22 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import { Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
 function Navbar() {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [aboutClickCount, setAboutClickCount] = useState(0);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [enteredPassword, setEnteredPassword] = useState("");
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -29,6 +38,39 @@ function Navbar() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  // Secret admin unlock trigger
+  const handleAboutClick = (e) => {
+    e.preventDefault();
+    const newCount = aboutClickCount + 1;
+    setAboutClickCount(newCount);
+
+    // Show password dialog after 3 clicks
+    if (newCount === 3) {
+      setShowPasswordDialog(true);
+      setAboutClickCount(0); // Reset counter
+      setEnteredPassword(""); // Clear password field
+    }
+  };
+
+  const handlePasswordSubmit = () => {
+    if (enteredPassword.toLowerCase() === "chehan") {
+      // Correct password - navigate to admin login
+      setShowPasswordDialog(false);
+      setEnteredPassword("");
+      navigate("/admin/login");
+    } else {
+      // Wrong password - clear and shake
+      setEnteredPassword("");
+      alert("❌ Incorrect password! Try again.");
+    }
+  };
+
+  const handlePasswordCancel = () => {
+    setShowPasswordDialog(false);
+    setEnteredPassword("");
+    setAboutClickCount(0);
   };
 
   const drawer = (
@@ -52,9 +94,9 @@ function Navbar() {
         {navItems.map((item) => (
           <ListItem
             key={item.label}
-            component={RouterLink}
-            to={item.path}
-            onClick={handleDrawerToggle}
+            component={item.label === "About" ? "button" : RouterLink}
+            to={item.label === "About" ? undefined : item.path}
+            onClick={item.label === "About" ? handleAboutClick : handleDrawerToggle}
             sx={{
               py: 2,
               px: 2,
@@ -149,8 +191,9 @@ function Navbar() {
             {navItems.map((item) => (
               <Button
                 key={item.label}
-                component={RouterLink}
-                to={item.path}
+                component={item.label === "About" ? "button" : RouterLink}
+                to={item.label === "About" ? undefined : item.path}
+                onClick={item.label === "About" ? handleAboutClick : undefined}
                 sx={{
                   color: "#eaeaea",
                   fontSize: "1.1rem",
@@ -186,30 +229,6 @@ function Navbar() {
                 {item.label}
               </Button>
             ))}
-
-            {/* Admin Login Button */}
-            <Button
-              component={RouterLink}
-              to="/admin/login"
-              sx={{
-                background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-                color: "#0b0b0b",
-                fontWeight: 700,
-                px: 2.5,
-                py: 1,
-                borderRadius: "6px",
-                textTransform: "uppercase",
-                fontSize: "0.85rem",
-                letterSpacing: "0.08em",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  boxShadow: "0 8px 25px rgba(212, 175, 55, 0.4)",
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              Admin
-            </Button>
           </Box>
 
           {/* Mobile Menu Button */}
@@ -240,6 +259,76 @@ function Navbar() {
       >
         {drawer}
       </Drawer>
+
+      {/* Secret Admin Unlock Dialog */}
+      <Dialog open={showPasswordDialog} onClose={handlePasswordCancel}>
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+            color: "#0b0b0b",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            fontFamily: "'Playfair Display', serif",
+            textTransform: "uppercase",
+          }}
+        >
+          🔐 Admin Access
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3, minWidth: 350 }}>
+          <TextField
+            autoFocus
+            fullWidth
+            type="password"
+            label="Enter Password"
+            value={enteredPassword}
+            onChange={(e) => setEnteredPassword(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handlePasswordSubmit();
+              }
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#d4af37",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#d4af37",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#d4af37",
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button
+            onClick={handlePasswordCancel}
+            sx={{
+              color: "#666",
+              textTransform: "uppercase",
+              fontWeight: 700,
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handlePasswordSubmit}
+            sx={{
+              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
+              color: "#0b0b0b",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              "&:hover": {
+                boxShadow: "0 6px 20px rgba(212, 175, 55, 0.4)",
+              },
+            }}
+          >
+            Unlock
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 }
