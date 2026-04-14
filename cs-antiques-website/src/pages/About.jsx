@@ -11,7 +11,7 @@ function About() {
     {
       icon: CheckCircle,
       title: "Authenticity",
-      description: "Genuine antiques with verified provenance and heritage",
+      description: "Genuine antiques with verified provenance and heritage 12345678",
     },
     {
       icon: Star,
