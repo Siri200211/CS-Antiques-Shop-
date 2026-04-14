@@ -63,7 +63,7 @@ function ProductDetail() {
     );
   }
 
-  const baseUrl = import.meta.env.VITE_BASE_URL || "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app";
+  const baseUrl = import.meta.env.VITE_BASE_URL ;
   const productPageUrl = `${baseUrl}/product/${product.id}`;
 
   return (
