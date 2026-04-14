@@ -10,6 +10,7 @@ const { generalLimiter, authLimiter, uploadLimiter } = require("./middleware/rat
 const healthRoutes = require("./routes/healthRoutes");
 const authRoutes = require("./routes/authRoutes");
 const productsRoutes = require("./routes/productsRoutes");
+const offersRoutes = require("./routes/offersRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const siteSettingsRoutes = require("./routes/siteSettingsRoutes");
 
@@ -89,6 +90,7 @@ app.get("/", (_req, res) => {
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productsRoutes);
+app.use("/api/offers", offersRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
 

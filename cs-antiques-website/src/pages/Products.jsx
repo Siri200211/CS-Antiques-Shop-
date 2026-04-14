@@ -1,5 +1,5 @@
-import { Box, Container, Typography, Grid, Card, Button, Stack } from "@mui/material";
-import { WhatsApp, FavoriteBorder, Favorite } from "@mui/icons-material";
+import { Box, Container, Typography, Grid, Card, Button, Stack, Slider, Chip } from "@mui/material";
+import { WhatsApp, FavoriteBorder, Favorite, Clear } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../config/api";
@@ -12,11 +12,22 @@ function Products() {
   const [favorites, setFavorites] = useState({});
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [allProducts, setAllProducts] = useState([]);
+  
+  // Filter states
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     setIsVisible(true);
     fetchProducts();
   }, []);
+
+  // Filter products when filters change
+  useEffect(() => {
+    applyFilters();
+  }, [selectedCategories, priceRange, allProducts]);
 
   const fetchProducts = async () => {
     try {
@@ -24,23 +35,51 @@ function Products() {
       if (response.ok) {
         const data = await response.json();
         const productsData = data.data || data || [];
-        console.log("🔥 Products page - Fetched products:", productsData.map(p => ({
-          id: p.id,
-          name: p.name,
-          mainImage: p.mainImage,
-          resolvedImage: resolveProductImage(p.mainImage),
-        })));
+        setAllProducts(productsData);
         setProducts(productsData);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(productsData.map(p => p.category).filter(Boolean))];
+        setCategories(uniqueCategories);
       } else {
         console.error("API Error:", response.status);
+        setAllProducts([]);
         setProducts([]);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
+      setAllProducts([]);
       setProducts([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    let filtered = allProducts;
+
+    // Filter by category
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(p => selectedCategories.includes(p.category));
+    }
+
+    // Filter by price
+    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+
+    setProducts(filtered);
+  };
+
+  const toggleCategory = (category) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const resetFilters = () => {
+    setSelectedCategories([]);
+    setPriceRange([0, 100000]);
   };
 
   const animationStyles = `
@@ -272,26 +311,108 @@ function Products() {
                 Loading Products...
               </Typography>
             </Container>
-          ) : products.length === 0 ? (
-            <Container maxWidth="xl" sx={{ textAlign: "center", py: 8 }}>
-              <Typography sx={{ color: "#d4af37", fontSize: "1.5rem", fontFamily: "'Playfair Display', serif" }}>
-                No Products Available
-              </Typography>
-            </Container>
           ) : (
-          <Container
-            maxWidth="xl"
-            sx={{
-              px: { xs: 0, sm: 2, md: 3 }   // remove side padding only in mobile
-            }}
-          >
+          <Container maxWidth="xl">
+            {/* Filters Section */}
+            <Box sx={{ mb: { xs: 4, md: 6 } }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3, flexWrap: { xs: "wrap", md: "nowrap" }, gap: 2 }}>
+                <Typography sx={{ fontSize: { xs: "0.9rem", md: "1rem" }, fontWeight: 700, color: "#d4af37", fontFamily: "'Playfair Display', serif", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  Filters
+                </Typography>
+                {(selectedCategories.length > 0 || priceRange[0] > 0 || priceRange[1] < 100000) && (
+                  <Button
+                    size="small"
+                    startIcon={<Clear sx={{ fontSize: "0.9rem" }} />}
+                    onClick={resetFilters}
+                    sx={{ color: "#d4af37", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", "&:hover": { backgroundColor: "rgba(212, 175, 55, 0.1)" } }}
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </Box>
 
+              {/* Category Filters */}
+              {categories.length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "#a0a0a0", mb: 1.5, textTransform: "uppercase", letterSpacing: "0.05em", fontFamily: "'Poppins', sans-serif" }}>
+                    Category
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+                    {categories.map(category => (
+                      <Chip
+                        key={category}
+                        label={category}
+                        onClick={() => toggleCategory(category)}
+                        sx={{
+                          backgroundColor: selectedCategories.includes(category) ? "rgba(212, 175, 55, 0.3)" : "rgba(212, 175, 55, 0.08)",
+                          color: selectedCategories.includes(category) ? "#d4af37" : "#909090",
+                          border: `1px solid ${selectedCategories.includes(category) ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)"}`,
+                          fontFamily: "'Poppins', sans-serif",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            borderColor: "#d4af37",
+                            transform: "translateY(-2px)",
+                          },
+                        }}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
+
+              {/* Price Range Filter */}
+              <Box sx={{ mb: 2, maxWidth: "300px" }}>
+                <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "#a0a0a0", mb: 2, textTransform: "uppercase", letterSpacing: "0.05em", fontFamily: "'Poppins', sans-serif" }}>
+                  Price Range: Rs {priceRange[0].toLocaleString()} - Rs {priceRange[1].toLocaleString()}
+                </Typography>
+                <Slider
+                  range
+                  min={0}
+                  max={100000}
+                  step={1000}
+                  value={priceRange}
+                  onChange={(e, newValue) => setPriceRange(newValue)}
+                  sx={{
+                    color: "#d4af37",
+                    "& .MuiSlider-track": { backgroundColor: "#d4af37", border: "none" },
+                    "& .MuiSlider-rail": { backgroundColor: "rgba(212, 175, 55, 0.2)" },
+                    "& .MuiSlider-thumb": {
+                      backgroundColor: "#d4af37",
+                      border: "3px solid rgba(11, 11, 11, 0.8)",
+                      "&:hover, &.Mui-focusVisible": {
+                        boxShadow: "0 0 20px rgba(212, 175, 55, 0.5)",
+                      },
+                    },
+                  }}
+                />
+              </Box>
+
+              {/* Results Count */}
+              <Typography sx={{ fontSize: "0.8rem", color: "#707070", fontFamily: "'Poppins', sans-serif", mt: 2 }}>
+                {products.length} {products.length === 1 ? "product" : "products"} found
+              </Typography>
+            </Box>
+
+            {products.length === 0 ? (
+              <Box sx={{ textAlign: "center", py: 8 }}>
+                <Typography sx={{ color: "#d4af37", fontSize: "1.2rem", fontFamily: "'Playfair Display', serif" }}>
+                  No Products Match Your Filters
+                </Typography>
+                <Button onClick={resetFilters} sx={{ color: "#d4af37", mt: 2 }}>
+                  Clear Filters
+                </Button>
+              </Box>
+            ) : (
             <Grid
               container
-              spacing={{ xs: 1, sm: 3, md: 4 }}   // smaller gutter only in mobile
+              spacing={{ xs: 1, sm: 3, md: 4 }}
               sx={{
                 justifyContent: "center",
                 alignItems: "stretch",
+                px: { xs: 0, sm: 2, md: 3 },
               }}
             >
               {products.map((product, index) => (
@@ -625,8 +746,9 @@ function Products() {
                 </Grid>
               ))}
             </Grid>
-          </Container>
             )}
+          </Container>
+          )}
         </Box>
       </Box>
     </Box>

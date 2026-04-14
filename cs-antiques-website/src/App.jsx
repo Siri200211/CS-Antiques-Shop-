@@ -14,6 +14,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Gallery from "./pages/Gallery";
 import Location from "./pages/Location";
 import Contact from "./pages/Contact";
+import Offers from "./pages/Offers";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 
@@ -51,6 +52,7 @@ function App() {
                     <Route path="/gallery" element={<Gallery />} />
                     <Route path="/location" element={<Location />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/offers" element={<Offers />} />
                   </Routes>
                 </Box>
                 <Footer />
