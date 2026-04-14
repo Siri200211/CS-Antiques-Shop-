@@ -11,6 +11,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Lock, Email } from "@mui/icons-material";
+import { apiUrl } from "../config/api";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -25,16 +26,13 @@ function AdminLogin() {
     setLoading(true);
 
     try {
-      console.log("Attempting login with:", email);
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(apiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      console.log("Response status:", response.status);
       const data = await response.json();
-      console.log("Response data:", data);
 
       if (!data.success) {
         setError(data.message || "Login failed");
@@ -46,7 +44,6 @@ function AdminLogin() {
       localStorage.setItem("authToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      console.log("Login successful, redirecting to dashboard");
       // Redirect to admin dashboard
       navigate("/admin/dashboard");
     } catch (err) {

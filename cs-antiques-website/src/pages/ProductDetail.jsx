@@ -2,25 +2,8 @@ import { Box, Container, Typography, Grid, Button, Stack, Card } from "@mui/mate
 import { WhatsApp, FavoriteBorder, Favorite } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import col1 from "../assets/images/products/col1.jpeg";
-import col2 from "../assets/images/products/col2.jpeg";
-import col3 from "../assets/images/products/col3.jpeg";
-import col4 from "../assets/images/products/col4.jpeg";
-import col5 from "../assets/images/products/col5.jpeg";
-import col6 from "../assets/images/products/col6.jpeg";
-import col7 from "../assets/images/products/col7.jpeg";
-import col8 from "../assets/images/products/col8.jpeg";
-import col9 from "../assets/images/products/col9.jpeg";
-import col10 from "../assets/images/products/col10.jpeg";
-import col11 from "../assets/images/products/col11.jpeg";
-import col12 from "../assets/images/products/col12.jpeg";
-import col13 from "../assets/images/products/col13.jpeg";
-import col14 from "../assets/images/products/col14.jpeg";
-import col15 from "../assets/images/products/col15.jpeg";
-import col16 from "../assets/images/products/col16.jpeg";
-import col17 from "../assets/images/products/col17.jpeg";
-import col18 from "../assets/images/products/col18.jpeg";
-import col19 from "../assets/images/products/col19.jpeg";
+import { apiUrl } from "../config/api";
+import { resolveProductImage, placeholderProductImage } from "../utils/productImages";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -36,10 +19,17 @@ function ProductDetail() {
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`);
+      const response = await fetch(apiUrl(`/api/products/${id}`));
       if (response.ok) {
         const data = await response.json();
-        setProduct(data.data || data);
+        const productData = data.data || data;
+        console.log("🔥 ProductDetail - Fetched product:", {
+          id: productData.id,
+          name: productData.name,
+          mainImage: productData.mainImage,
+          resolvedImage: resolveProductImage(productData.mainImage),
+        });
+        setProduct(productData);
       }
     } catch (error) {
       console.error("Error fetching product:", error);
@@ -49,10 +39,8 @@ function ProductDetail() {
   };
 
   const getProductImage = () => {
-    if (!product) return col1;
-    if (product.mainImage) return product.mainImage;
-    const images = [col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19];
-    return images[(product.id - 1) % images.length];
+    if (!product) return placeholderProductImage;
+    return resolveProductImage(product.mainImage);
   };
 
   if (loading) {
@@ -111,9 +99,21 @@ function ProductDetail() {
               }}
             >
               <Box
+                key={product?.mainImage || "placeholder"}
                 component="img"
                 src={getProductImage()}
                 alt={product.name}
+                onLoad={(e) => {
+                  console.log("✅ Image loaded successfully:", e.currentTarget.src);
+                }}
+                onError={(e) => {
+                  console.error("❌ Image load failed:", e.currentTarget.src);
+                  const fallback = placeholderProductImage;
+                  if (!e.currentTarget.src.startsWith("data:image/svg+xml")) {
+                    console.log("Fallback to placeholder");
+                    e.currentTarget.src = fallback;
+                  }
+                }}
                 sx={{
                   width: "100%",
                   height: "100%",

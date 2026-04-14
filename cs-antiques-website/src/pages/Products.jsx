@@ -2,25 +2,8 @@ import { Box, Container, Typography, Grid, Card, Button, Stack } from "@mui/mate
 import { WhatsApp, FavoriteBorder, Favorite } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import col1 from "../assets/images/products/col1.jpeg";
-import col2 from "../assets/images/products/col2.jpeg";
-import col3 from "../assets/images/products/col3.jpeg";
-import col4 from "../assets/images/products/col4.jpeg";
-import col5 from "../assets/images/products/col5.jpeg";
-import col6 from "../assets/images/products/col6.jpeg";
-import col7 from "../assets/images/products/col7.jpeg";
-import col8 from "../assets/images/products/col8.jpeg";
-import col9 from "../assets/images/products/col9.jpeg";
-import col10 from "../assets/images/products/col10.jpeg";
-import col11 from "../assets/images/products/col11.jpeg";
-import col12 from "../assets/images/products/col12.jpeg";
-import col13 from "../assets/images/products/col13.jpeg";
-import col14 from "../assets/images/products/col14.jpeg";
-import col15 from "../assets/images/products/col15.jpeg";
-import col16 from "../assets/images/products/col16.jpeg";
-import col17 from "../assets/images/products/col17.jpeg";
-import col18 from "../assets/images/products/col18.jpeg";
-import col19 from "../assets/images/products/col19.jpeg";
+import { apiUrl } from "../config/api";
+import { resolveProductImage, placeholderProductImage } from "../utils/productImages";
 
 
 function Products() {
@@ -37,11 +20,17 @@ function Products() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/products");
+      const response = await fetch(apiUrl("/api/products"));
       if (response.ok) {
         const data = await response.json();
-        console.log("API Response:", data);
-        setProducts(data.data || data || []);
+        const productsData = data.data || data || [];
+        console.log("🔥 Products page - Fetched products:", productsData.map(p => ({
+          id: p.id,
+          name: p.name,
+          mainImage: p.mainImage,
+          resolvedImage: resolveProductImage(p.mainImage),
+        })));
+        setProducts(productsData);
       } else {
         console.error("API Error:", response.status);
         setProducts([]);
@@ -140,9 +129,7 @@ function Products() {
   };
 
   const getProductImage = (product) => {
-    if (product.mainImage) return product.mainImage;
-    const images = [col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19];
-    return images[(product.id - 1) % images.length];
+    return resolveProductImage(product.mainImage);
   };
 
   return (
@@ -153,7 +140,7 @@ function Products() {
         width: "100vw",
         background: `
           linear-gradient(135deg, rgba(0, 0, 0, 0.92) 0%, rgba(20, 15, 10, 0.9) 50%, rgba(0, 0, 0, 0.92) 100%),
-          url(${col9}) center/cover no-repeat fixed
+          url(${resolveProductImage("/images/products/col9.jpeg")}) center/cover no-repeat fixed
         `,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -401,7 +388,10 @@ function Products() {
                         src={getProductImage(product)}
                         alt={product.name}
                         onError={(e) => {
-                          e.target.style.display = "none";
+                          const fallback = placeholderProductImage;
+                          if (!e.currentTarget.src.startsWith("data:image/svg+xml")) {
+                            e.currentTarget.src = fallback;
+                          }
                         }}
                         sx={{
                           width: "100%",

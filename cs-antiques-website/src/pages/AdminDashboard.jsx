@@ -25,17 +25,21 @@ import {
   Card,
   Grid,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { Logout, Edit, Delete, Add, Dashboard, Settings } from "@mui/icons-material";
+import { apiUrl } from "../config/api";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -45,6 +49,17 @@ function AdminDashboard() {
     condition: "",
     mainImage: "",
   });
+
+  // Fetch all products
+  async function fetchProducts() {
+    try {
+      const response = await fetch(apiUrl("/api/products"));
+      const data = await response.json();
+      setProducts(data.data || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }
 
   // Check authentication on mount
   useEffect(() => {
@@ -60,19 +75,6 @@ function AdminDashboard() {
     setUser(userData);
     fetchProducts();
   }, [navigate]);
-
-  // Fetch all products
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/products");
-      const data = await response.json();
-      setProducts(data.data || []);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setLoading(false);
-    }
-  };
 
   // Handle logout
   const handleLogout = () => {
@@ -94,6 +96,7 @@ function AdminDashboard() {
         condition: product.condition || "",
         mainImage: product.mainImage || "",
       });
+      setImagePreview(product.mainImage || null);
     } else {
       setEditingProduct(null);
       setFormData({
@@ -105,13 +108,75 @@ function AdminDashboard() {
         condition: "",
         mainImage: "",
       });
+      setImagePreview(null);
     }
+    setImageFile(null);
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingProduct(null);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file");
+        return;
+      }
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size must be less than 5MB");
+        return;
+      }
+      setImageFile(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Upload image to backend
+  const uploadImage = async () => {
+    if (!imageFile) return formData.mainImage; // Return existing image if no new file
+
+    setUploadingImage(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const formDataObj = new FormData();
+      formDataObj.append("image", imageFile);
+
+      const response = await fetch(apiUrl("/api/products/upload-image"), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataObj,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        return data.data.imagePath;
+      } else {
+        alert("Error uploading image: " + data.message);
+        return null;
+      }
+    } catch (error) {
+      alert("Error uploading image: " + error.message);
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   // Handle form submission
@@ -119,9 +184,16 @@ function AdminDashboard() {
     const token = localStorage.getItem("authToken");
 
     try {
+      // Upload image if a new one was selected
+      let imagePath = formData.mainImage;
+      if (imageFile) {
+        imagePath = await uploadImage();
+        if (!imagePath) return; // Image upload failed
+      }
+
       const url = editingProduct
-        ? `http://localhost:5000/api/products/${editingProduct.id}`
-        : "http://localhost:5000/api/products";
+        ? apiUrl(`/api/products/${editingProduct.id}`)
+        : apiUrl("/api/products");
 
       const method = editingProduct ? "PUT" : "POST";
 
@@ -130,6 +202,7 @@ function AdminDashboard() {
         ...formData,
         price: parseFloat(formData.price) || 0,
         originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
+        mainImage: imagePath?.trim() || null,
       };
 
       const response = await fetch(url, {
@@ -162,7 +235,7 @@ function AdminDashboard() {
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(apiUrl(`/api/products/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -490,6 +563,8 @@ function AdminDashboard() {
           <TextField
             fullWidth
             label="Main Image URL"
+            helperText="Use /images/products/col1.jpeg … col19.jpeg. Legacy DB paths like /images/products/table1.jpg also work. Leave empty for a neutral No image slot."
+            FormHelperTextProps={{ sx: { color: "#888", fontSize: "0.75rem" } }}
             value={formData.mainImage}
             onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
             sx={{
@@ -504,6 +579,77 @@ function AdminDashboard() {
               },
             }}
           />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
+            <Typography sx={{ color: "#d4af37", fontWeight: 600 }}>Upload New Image</Typography>
+            <Box
+              sx={{
+                border: "2px dashed rgba(212, 175, 55, 0.4)",
+                borderRadius: "8px",
+                p: 2,
+                textAlign: "center",
+                cursor: "pointer",
+                transition: "all 0.3s",
+                "&:hover": {
+                  borderColor: "rgba(212, 175, 55, 0.7)",
+                  backgroundColor: "rgba(212, 175, 55, 0.05)",
+                },
+              }}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: "none" }}
+                id="image-upload"
+              />
+              <label htmlFor="image-upload" style={{ cursor: "pointer", display: "block" }}>
+                <Typography sx={{ color: "#b0b0b0", fontSize: "0.9rem", mb: 1 }}>
+                  Click to upload or drag and drop
+                </Typography>
+                <Typography sx={{ color: "#888", fontSize: "0.8rem" }}>
+                  PNG, JPG, GIF, WEBP up to 5MB
+                </Typography>
+              </label>
+            </Box>
+            {(imagePreview || formData.mainImage) && (
+              <Box
+                sx={{
+                  position: "relative",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  backgroundColor: "#000",
+                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                }}
+              >
+                <img
+                  src={imagePreview || apiUrl(formData.mainImage)}
+                  alt="Preview"
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                  }}
+                />
+                {uploadingImage && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    }}
+                  >
+                    <CircularProgress size={40} sx={{ color: "#d4af37" }} />
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={handleCloseDialog} sx={{ color: "#b0b0b0" }}>
@@ -511,13 +657,17 @@ function AdminDashboard() {
           </Button>
           <Button
             onClick={handleSaveProduct}
+            disabled={uploadingImage}
             sx={{
               background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
               color: "#0b0b0b",
               fontWeight: 700,
+              "&:disabled": {
+                opacity: 0.6,
+              },
             }}
           >
-            {editingProduct ? "Update" : "Create"}
+            {uploadingImage ? "Uploading..." : editingProduct ? "Update" : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
