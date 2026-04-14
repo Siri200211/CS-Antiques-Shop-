@@ -1,0 +1,15 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*", "/css/*", "/js/*", "*.svg", "*.png", "*.jpg", "*.jpeg", "*.gif"]
+  },
+  "routes": [
+    {
+      "route": "/api/*",
+      "serve": "api"
+    }
+  ],
+  "mimeTypes": {
+    ".json": "application/json"
+  }
+}

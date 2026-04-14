@@ -11,7 +11,7 @@ function About() {
     {
       icon: CheckCircle,
       title: "Authenticity",
-      description: "Genuine antiques with verified provenance and heritage12345",
+      description: "Genuine antiques with verified provenance and heritage",
     },
     {
       icon: Star,
@@ -21,7 +21,7 @@ function About() {
     {
       icon: TrendingUp,
       title: "Trust",
-      description: "Trusted by 700+ customers worldwide since 2019",
+      description: "Trusted by 700+ customers worldwide since 2020",
     },
     {
       icon: Handshake,
@@ -352,7 +352,7 @@ function About() {
                   animation: "fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards, shimmer 3s ease-in-out 1s infinite",
                 }}
               >
-                Established in 2019 with Passion for Antiquity
+                Established in 2020 with Passion for Antiquity
               </Typography>
 
               <Typography

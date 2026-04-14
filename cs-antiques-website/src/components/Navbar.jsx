@@ -28,6 +28,7 @@ function Navbar() {
   const [aboutClickCount, setAboutClickCount] = useState(0);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [clickTimeoutId, setClickTimeoutId] = useState(null);
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -40,17 +41,35 @@ function Navbar() {
     setMobileOpen(!mobileOpen);
   };
 
-  // Secret admin unlock trigger
+  // Secret admin unlock trigger - 3 clicks within 3 seconds
   const handleAboutClick = (e) => {
     e.preventDefault();
+    
+    // On first click, navigate to About page
+    if (aboutClickCount === 0) {
+      navigate("/about");
+      setAboutClickCount(1);
+      
+      // Set timeout to reset counter after 3 seconds
+      if (clickTimeoutId) clearTimeout(clickTimeoutId);
+      const timeoutId = setTimeout(() => {
+        setAboutClickCount(0);
+      }, 3000);
+      setClickTimeoutId(timeoutId);
+      return;
+    }
+
+    // Track subsequent clicks
     const newCount = aboutClickCount + 1;
     setAboutClickCount(newCount);
 
-    // Show password dialog after 3 clicks
+    // Show password dialog after 3 clicks within 3 seconds
     if (newCount === 3) {
       setShowPasswordDialog(true);
       setAboutClickCount(0); // Reset counter
       setEnteredPassword(""); // Clear password field
+      if (clickTimeoutId) clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
     }
   };
 
@@ -59,9 +78,12 @@ function Navbar() {
       // Correct password - navigate to admin login
       setShowPasswordDialog(false);
       setEnteredPassword("");
+      setAboutClickCount(0);
+      if (clickTimeoutId) clearTimeout(clickTimeoutId);
+      setClickTimeoutId(null);
       navigate("/admin/login");
     } else {
-      // Wrong password - clear and shake
+      // Wrong password - clear and show error
       setEnteredPassword("");
       alert("❌ Incorrect password! Try again.");
     }
@@ -71,6 +93,8 @@ function Navbar() {
     setShowPasswordDialog(false);
     setEnteredPassword("");
     setAboutClickCount(0);
+    if (clickTimeoutId) clearTimeout(clickTimeoutId);
+    setClickTimeoutId(null);
   };
 
   const drawer = (
