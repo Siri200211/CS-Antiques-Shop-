@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/material";
+import { useEffect } from "react";
 import luxuryTheme from "./theme/theme";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -16,11 +17,20 @@ import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <ThemeProvider theme={luxuryTheme}>
       <CssBaseline />
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Admin Routes - Completely isolated, no flex layout wrapper */}
           <Route path="/admin/login" element={<AdminLogin />} />

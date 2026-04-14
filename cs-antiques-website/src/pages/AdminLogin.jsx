@@ -16,7 +16,7 @@ import { apiUrl } from "../config/api";
 function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("test@csantiques.com");
-  const [password, setPassword] = useState("TestPassword123!");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -226,26 +226,7 @@ function AdminLogin() {
             </Button>
           </Box>
 
-          {/* Demo Credentials */}
-          <Box
-            sx={{
-              mt: 3,
-              p: 2,
-              backgroundColor: "rgba(212, 175, 55, 0.08)",
-              borderRadius: "8px",
-              border: "1px solid rgba(212, 175, 55, 0.2)",
-            }}
-          >
-            <Typography sx={{ fontSize: "0.8rem", color: "#d4af37", fontWeight: 600, mb: 1 }}>
-              Demo Credentials:
-            </Typography>
-            <Typography sx={{ fontSize: "0.75rem", color: "#b0b0b0" }}>
-              📧 Email: test@csantiques.com
-            </Typography>
-            <Typography sx={{ fontSize: "0.75rem", color: "#b0b0b0" }}>
-              🔐 Password: TestPassword123!
-            </Typography>
-          </Box>
+
         </Paper>
       </Container>
     </Box>

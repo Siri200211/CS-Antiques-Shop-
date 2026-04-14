@@ -1,11 +1,5 @@
-import { Box, Container, Grid, Typography, Stack, IconButton } from "@mui/material";
-import {
-  Facebook,
-  Phone,
-  Email,
-  LocationOn,
-  WhatsApp,
-} from "@mui/icons-material";
+﻿import { Box, Container, Grid, Typography, Stack, IconButton, Divider } from "@mui/material";
+import { Facebook, Phone, Email, LocationOn, WhatsApp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 
 function Footer() {
@@ -13,78 +7,35 @@ function Footer() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+      { threshold: 0.05 }
+    );
+    const footer = document.querySelector("footer");
+    if (footer) observer.observe(footer);
+    return () => observer.disconnect();
   }, []);
 
-  const animationStyles = `
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-      100% {
-        background-position: 1000px 0;
-      }
-    }
-  `;
-
-  const contactInfo = {
-    panadura: {
-      branch: "Panadura Branch",
+  const branches = [
+    {
+      name: "Panadura",
       phone: "075 264 4606",
-      hours: "10:00 AM - 6:00 PM",
-      address: "123 Main Street, Panadura",
+      whatsapp: "94752644606",
+      address: "214A Horana Rd, Panadura",
     },
-    rajagiriya: {
-      branch: "Rajagiriya Branch",
+    {
+      name: "Rajagiriya",
       phone: "078 783 5304",
-      hours: "10:00 AM - 6:00 PM",
+      whatsapp: "94787835304",
       address: "456 Gem Street, Rajagiriya",
     },
-  };
+  ];
 
   const socialLinks = [
-    {
-      icon: Facebook,
-      label: "CS Antiques",
-      url: "https://www.facebook.com/share/1Fu3caXyrp/",
-    },
-    {
-      icon: Facebook,
-      label: "CS Pettagam Paradise",
-      url: "https://www.facebook.com/share/1QS9BdpFX6/",
-    },
-    {
-      icon: Facebook,
-      label: "CS Antiques Rajagiriya",
-      url: "https://www.facebook.com/share/187hg525rG/",
-    },
-    {
-      icon: Facebook,
-      label: "CS Gramophones",
-      url: "https://www.facebook.com/share/1EwrqcfaMG/",
-    },
+    { icon: Facebook, label: "CS Antiques", url: "https://www.facebook.com/share/1Fu3caXyrp/" },
+    { icon: Facebook, label: "CS Pettagam Paradise", url: "https://www.facebook.com/share/1QS9BdpFX6/" },
+    { icon: Facebook, label: "CS Antiques Rajagiriya", url: "https://www.facebook.com/share/187hg525rG/" },
+    { icon: Facebook, label: "CS Gramophones", url: "https://www.facebook.com/share/1EwrqcfaMG/" },
   ];
 
   return (
@@ -92,11 +43,9 @@ function Footer() {
       component="footer"
       sx={{
         backgroundColor: "#050505",
-        borderTop: "1px solid rgba(212, 175, 55, 0.2)",
-        pt: { xs: 6, sm: 8, md: 12 },
-        pb: { xs: 4, sm: 6, md: 8 },
+        borderTop: "1px solid rgba(212,175,55,0.15)",
+        py: { xs: 4, md: 5 },
         position: "relative",
-        overflow: "hidden",
         "&::before": {
           content: '""',
           position: "absolute",
@@ -104,420 +53,167 @@ function Footer() {
           left: 0,
           right: 0,
           height: "1px",
-          background: "linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent)",
+          background: "linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%)",
         },
       }}
     >
-      <style>{animationStyles}</style>
       <Container maxWidth="lg">
-        <Grid
-          container
-          spacing={{ xs: 2, sm: 2.5, md: 3, lg: 4 }}
-          sx={{ mb: { xs: 4, md: 6 }, justifyContent: "center" }}
-        >
-          {/* Branch 1 */}
-          <Grid
-            item
-            xs={6}
-            sm={6}
-            md={3}
-            lg={2.5}
-            sx={{
-              animation: isVisible ? "fadeInUp 0.8s ease-out 0.1s both" : "none",
-            }}
-          >
-            <Box>
+        {/* Main Footer Content */}
+        <Grid container spacing={{ xs: 3, md: 4 }} sx={{ mb: 3 }}>
+          
+          {/* Left: Brand & Social */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease" }}>
               <Typography
                 sx={{
-                  color: "#d4af37",
-                  fontSize: { xs: "0.95rem", md: "1rem" },
-                  fontWeight: 700,
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
+                  fontSize: "1.3rem",
+                  fontWeight: 800,
+                  background: "linear-gradient(135deg, #d4af37 0%, #f0d060 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
                   fontFamily: "'Playfair Display', serif",
-                  mb: 2.5,
+                  mb: 1.5,
                 }}
               >
-                {contactInfo.panadura.branch}
+                CS Antiques
               </Typography>
-
-              <Stack spacing={2}>
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-                  <Phone
-                    sx={{
-                      color: "#d4af37",
-                      mt: 0.5,
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Box>
-                    <Typography
-                      component="a"
-                      href={`tel:${contactInfo.panadura.phone}`}
-                      sx={{
-                        color: "#eaeaea",
-                        fontSize: { xs: "0.85rem", md: "0.9rem" },
-                        fontWeight: 500,
-                        mb: 0.5,
-                        fontFamily: "'Poppins', sans-serif",
-                        textDecoration: "none",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          color: "#d4af37",
-                        },
-                      }}
-                    >
-                      {contactInfo.panadura.phone}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-                  <LocationOn
-                    sx={{
-                      color: "#d4af37",
-                      mt: 0.5,
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: "#b0b0b0",
-                      fontSize: { xs: "0.8rem", md: "0.85rem" },
-                      lineHeight: 1.6,
-                      fontFamily: "'Poppins', sans-serif",
-                    }}
-                  >
-                    {contactInfo.panadura.address}
-                  </Typography>
-                </Box>
-
-                <Typography
-                  sx={{
-                    color: "#909090",
-                    fontSize: { xs: "0.8rem", md: "0.85rem" },
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                >
-                  ⏰ {contactInfo.panadura.hours}
-                </Typography>
-              </Stack>
-            </Box>
-          </Grid>
-
-          {/* Branch 2 */}
-          <Grid
-            item
-            xs={6}
-            sm={6}
-            md={3}
-            lg={2.5}
-            sx={{
-              animation: isVisible ? "fadeInUp 0.8s ease-out 0.2s both" : "none",
-            }}
-          >
-            <Box>
-              <Typography
-                sx={{
-                  color: "#d4af37",
-                  fontSize: { xs: "0.95rem", md: "1rem" },
-                  fontWeight: 700,
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  fontFamily: "'Playfair Display', serif",
-                  mb: 2.5,
-                }}
-              >
-                {contactInfo.rajagiriya.branch}
+              <Typography sx={{ color: "#606060", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", lineHeight: 1.6, mb: 2 }}>
+                Treasures from the past, lovingly curated for your dream home.
               </Typography>
-
-              <Stack spacing={2}>
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-                  <Phone
-                    sx={{
-                      color: "#d4af37",
-                      mt: 0.5,
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Box>
-                    <Typography
-                      component="a"
-                      href={`tel:${contactInfo.rajagiriya.phone}`}
-                      sx={{
-                        color: "#eaeaea",
-                        fontSize: { xs: "0.85rem", md: "0.9rem" },
-                        fontWeight: 500,
-                        mb: 0.5,
-                        fontFamily: "'Poppins', sans-serif",
-                        textDecoration: "none",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          color: "#d4af37",
-                        },
-                      }}
-                    >
-                      {contactInfo.rajagiriya.phone}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-                  <LocationOn
-                    sx={{
-                      color: "#d4af37",
-                      mt: 0.5,
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: "#b0b0b0",
-                      fontSize: { xs: "0.8rem", md: "0.85rem" },
-                      lineHeight: 1.6,
-                      fontFamily: "'Poppins', sans-serif",
-                    }}
-                  >
-                    {contactInfo.rajagiriya.address}
-                  </Typography>
-                </Box>
-
-                <Typography
-                  sx={{
-                    color: "#909090",
-                    fontSize: { xs: "0.8rem", md: "0.85rem" },
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                >
-                  ⏰ {contactInfo.rajagiriya.hours}
-                </Typography>
-              </Stack>
-            </Box>
-          </Grid>
-
-          {/* Contact Methods */}
-          <Grid
-            item
-            xs={6}
-            sm={6}
-            md={3}
-            lg={2.5}
-            sx={{
-              animation: isVisible ? "fadeInUp 0.8s ease-out 0.3s both" : "none",
-            }}
-          >
-            <Box>
-              <Typography
-                sx={{
-                  color: "#d4af37",
-                  fontSize: { xs: "0.95rem", md: "1rem" },
-                  fontWeight: 700,
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  fontFamily: "'Playfair Display', serif",
-                  mb: 2.5,
-                }}
-              >
-                Contact Us
-              </Typography>
-
-              <Stack spacing={2}>
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-                  <Email
-                    sx={{
-                      color: "#d4af37",
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Typography
-                    component="a"
-                    href="mailto:csantiquespanadura@gmail.com"
-                    sx={{
-                      color: "#eaeaea",
-                      fontSize: { xs: "0.75rem", md: "0.85rem" },
-                      wordBreak: "break-word",
-                      fontFamily: "'Poppins', sans-serif",
-                      textDecoration: "none",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        color: "#d4af37",
-                      },
-                    }}
-                  >
-                    csantiquespanadura@gmail.com
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
-                  <WhatsApp
-                    sx={{
-                      color: "#25D366",
-                      fontSize: { xs: "1rem", md: "1.2rem" },
-                      flexShrink: 0,
-                    }}
-                  />
-                  <Typography
-                    component="a"
-                    href="https://wa.me/94718820809"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      color: "#eaeaea",
-                      fontSize: { xs: "0.85rem", md: "0.9rem" },
-                      fontFamily: "'Poppins', sans-serif",
-                      textDecoration: "none",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        color: "#25D366",
-                      },
-                    }}
-                  >
-                    071 882 0809
-                  </Typography>
-                </Box>
-
-                <Typography
-                  sx={{
-                    color: "#909090",
-                    fontSize: { xs: "0.75rem", md: "0.8rem" },
-                    fontStyle: "italic",
-                    mt: 2,
-                    lineHeight: 1.8,
-                    fontFamily: "'Poppins', sans-serif",
-                  }}
-                >
-                  Monday - Saturday: 10 AM - 6 PM
-                  <br />
-                  Sunday: By Appointment
-                </Typography>
-              </Stack>
-            </Box>
-          </Grid>
-
-          {/* Follow Us */}
-          <Grid
-            item
-            xs={6}
-            sm={6}
-            md={3}
-            lg={2.5}
-            sx={{
-              animation: isVisible ? "fadeInUp 0.8s ease-out 0.4s both" : "none",
-            }}
-          >
-            <Box>
-              <Typography
-                sx={{
-                  color: "#d4af37",
-                  fontSize: { xs: "0.95rem", md: "1rem" },
-                  fontWeight: 700,
-                  letterSpacing: "0.15em",
-                  textTransform: "uppercase",
-                  fontFamily: "'Playfair Display', serif",
-                  mb: 2.5,
-                }}
-              >
-                Follow Us
-              </Typography>
-
-              <Stack spacing={1.5}>
-                {socialLinks.map((social, index) => {
+              {/* Social Icons - Compact */}
+              <Stack direction="row" spacing={0.8} sx={{ opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease 0.1s" }}>
+                {socialLinks.map((social, i) => {
                   const Icon = social.icon;
-                  const iconColor = Icon === Facebook ? "#1877F2" : "#d4af37";
                   return (
-                    <Box
-                      key={index}
+                    <IconButton
+                      key={i}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={social.label}
+                      size="small"
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.5,
-                        animation: isVisible
-                          ? `fadeInUp 0.8s ease-out ${0.4 + index * 0.1}s both`
-                          : "none",
+                        width: 32,
+                        height: 32,
+                        backgroundColor: "rgba(24,119,242,0.12)",
+                        border: "1px solid rgba(24,119,242,0.25)",
+                        color: "#1877F2",
+                        transition: "all 0.25s ease",
+                        "&:hover": {
+                          backgroundColor: "#1877F2",
+                          color: "#fff",
+                          transform: "translateY(-2px)",
+                        },
                       }}
                     >
-                      <IconButton
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                          color: iconColor,
-                          p: 0.5,
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            color: Icon === Facebook ? "#1877F2" : "#e8c547",
-                            transform: "scale(1.25) rotate(5deg)",
-                          },
-                        }}
-                      >
-                        <Icon fontSize="small" />
-                      </IconButton>
-                      <Typography
-                        sx={{
-                          color: "#b0b0b0",
-                          fontSize: { xs: "0.75rem", md: "0.8rem" },
-                          maxWidth: "150px",
-                          fontFamily: "'Poppins', sans-serif",
-                        }}
-                      >
-                        {social.label}
-                      </Typography>
-                    </Box>
+                      <Icon sx={{ fontSize: "0.9rem" }} />
+                    </IconButton>
                   );
                 })}
               </Stack>
             </Box>
           </Grid>
+
+          {/* Center: Contact & Hours */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease 0.15s" }}>
+              <Typography sx={{ color: "#d4af37", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Poppins', sans-serif", mb: 1.5 }}>
+                Contact
+              </Typography>
+              <Stack spacing={1.2}>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Email sx={{ color: "#d4af37", fontSize: "1rem", flexShrink: 0 }} />
+                  <Typography
+                    component="a"
+                    href="mailto:csantiquespanadura@gmail.com"
+                    sx={{ color: "#808080", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", textDecoration: "none", "&:hover": { color: "#d4af37" } }}
+                  >
+                    csantiquespanadura@gmail.com
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <Phone sx={{ color: "#d4af37", fontSize: "1rem", flexShrink: 0 }} />
+                  <Typography
+                    component="a"
+                    href="tel:0718820809"
+                    sx={{ color: "#808080", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", textDecoration: "none", "&:hover": { color: "#d4af37" } }}
+                  >
+                    071 882 0809
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}>
+                  <WhatsApp sx={{ color: "#25D366", fontSize: "1rem", mt: 0.2, flexShrink: 0 }} />
+                  <Typography
+                    component="a"
+                    href="https://wa.me/94718820809"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ color: "#808080", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", textDecoration: "none", "&:hover": { color: "#25D366" } }}
+                  >
+                    WhatsApp
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Right: Branches */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease 0.2s" }}>
+              <Typography sx={{ color: "#d4af37", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Poppins', sans-serif", mb: 1.5 }}>
+                Showrooms
+              </Typography>
+              <Stack spacing={1.5}>
+                {branches.map((branch, idx) => (
+                  <Box key={idx}>
+                    <Typography sx={{ color: "#e0e0e0", fontSize: "0.85rem", fontWeight: 600, fontFamily: "'Poppins', sans-serif", mb: 0.4 }}>
+                      {branch.name}
+                    </Typography>
+                    <Typography sx={{ color: "#606060", fontSize: "0.75rem", fontFamily: "'Poppins', sans-serif", mb: 0.3 }}>
+                      {branch.address}
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      <Typography
+                        component="a"
+                        href={`tel:${branch.phone.replace(/\s/g, "")}`}
+                        sx={{ color: "#808080", fontSize: "0.75rem", fontFamily: "'Poppins', sans-serif", textDecoration: "none", "&:hover": { color: "#d4af37" } }}
+                      >
+                        📞 {branch.phone}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Far Right: Hours */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease 0.25s" }}>
+              <Typography sx={{ color: "#d4af37", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "'Poppins', sans-serif", mb: 1.5 }}>
+                Hours
+              </Typography>
+              <Typography sx={{ color: "#808080", fontSize: "0.8rem", fontFamily: "'Poppins', sans-serif", lineHeight: 1.7 }}>
+                <Box sx={{ color: "#d4af37", fontWeight: 600 }}>Mon – Sat</Box>
+                10:00 AM – 6:00 PM<br />
+                <Box sx={{ color: "#d4af37", fontWeight: 600, mt: 1 }}>Sunday</Box>
+                By Appointment Only
+              </Typography>
+            </Box>
+          </Grid>
         </Grid>
 
         {/* Divider */}
-        <Box
-          sx={{
-            height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent)",
-            mb: { xs: 3, md: 4 },
-            animation: isVisible ? "fadeInUp 0.8s ease-out 0.5s both" : "none",
-          }}
-        />
+        <Divider sx={{ borderColor: "rgba(212,175,55,0.1)", my: 2 }} />
 
-        {/* Bottom Section */}
-        <Box
-          sx={{
-            textAlign: "center",
-            animation: isVisible ? "fadeInUp 0.8s ease-out 0.6s both" : "none",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "#d4af37",
-              fontSize: { xs: "0.9rem", md: "1.05rem" },
-              fontWeight: 600,
-              letterSpacing: "0.1em",
-              mb: 1,
-              fontFamily: "'Playfair Display', serif",
-            }}
-          >
-            © {currentYear} CS ANTIQUES. All rights reserved.
+        {/* Bottom Bar - Compact */}
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between", alignItems: "center", gap: 1.5, opacity: isVisible ? 1 : 0.5, transition: "opacity 0.6s ease 0.3s" }}>
+          <Typography sx={{ color: "#505050", fontSize: "0.75rem", fontFamily: "'Poppins', sans-serif", textAlign: { xs: "center", sm: "left" } }}>
+            © {currentYear} CS Antiques. All rights reserved.
           </Typography>
-
-          <Typography
-            sx={{
-              color: "#909090",
-              fontSize: { xs: "0.75rem", md: "0.85rem" },
-              letterSpacing: "0.05em",
-              fontFamily: "'Poppins', sans-serif",
-            }}
-          >
-            Bringing the Unique Charm of Antiquity to Your Dream Home
+          <Typography sx={{ color: "#606060", fontSize: "0.75rem", fontFamily: "'Poppins', sans-serif", textAlign: "center" }}>
+            Bringing Unique Charm to Your Home
           </Typography>
         </Box>
       </Container>
@@ -526,3 +222,4 @@ function Footer() {
 }
 
 export default Footer;
+
