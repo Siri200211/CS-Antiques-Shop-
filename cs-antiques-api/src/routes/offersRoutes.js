@@ -73,16 +73,45 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Create offer (admin)
-router.post("/", requireAuth, upload.single("image"), async (req, res, next) => {
-  try {
-    const { title, description, promoCode, discount, validFrom, validUntil } = req.body;
-    let imageUrl = req.body.imageUrl;
+// Create offer (admin) - accepts both FormData and JSON
+router.post("/", requireAuth, (req, res, next) => {
+  // Try to parse as FormData if content-type is multipart, otherwise skip
+  const isFormData = req.headers["content-type"]?.includes("multipart/form-data");
+  
+  if (isFormData) {
+    // If FormData, use multer
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("❌ Multer error:", err.message);
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      createOffer(req, res, next);
+    });
+  } else {
+    // If JSON, proceed directly
+    createOffer(req, res, next);
+  }
+});
 
-    // If file uploaded, convert to base64 data URL
+async function createOffer(req, res, next) {
+  try {
+    console.log("📝 CREATE OFFER - Request received");
+    console.log("User:", req.user);
+    console.log("Content-Type:", req.headers["content-type"]);
+    console.log("Body:", req.body);
+    console.log("File:", req.file ? "Yes" : "No");
+    
+    const { title, description, promoCode, discount, validFrom, validUntil, imageUrl: bodyImageUrl } = req.body;
+    let imageUrl = bodyImageUrl;
+
+    console.log("Parsed fields:", { title, description, promoCode, discount, validFrom, validUntil });
+
+    // If file uploaded (FormData), convert to base64 data URL
     if (req.file) {
+      console.log("Converting file to base64...");
       const base64 = req.file.buffer.toString("base64");
       imageUrl = `data:${req.file.mimetype};base64,${base64}`;
+      console.log("Image URL created (length:", imageUrl.length, ")");
     }
 
     // Validate
@@ -96,11 +125,16 @@ router.post("/", requireAuth, upload.single("image"), async (req, res, next) => 
       validUntil,
     });
 
+    console.log("Validation:", validation.success ? "PASSED" : "FAILED");
     if (!validation.success) {
+      console.log("Validation errors:", validation.error.errors);
       return res.status(400).json({ success: false, errors: validation.error.errors });
     }
 
+    console.log("Connecting to database...");
     const pool = await getPool();
+    console.log("Database connected, executing query...");
+    
     const result = await pool
       .request()
       .input("title", sql.NVarChar, title)
@@ -117,29 +151,51 @@ router.post("/", requireAuth, upload.single("image"), async (req, res, next) => 
         SELECT CAST(SCOPE_IDENTITY() as int) as id;
       `);
 
+    console.log("✅ Offer created successfully:", result.recordset[0].id);
     return res.status(201).json({
       success: true,
       message: "Offer created",
       data: { id: result.recordset[0].id },
     });
   } catch (error) {
+    console.error("❌ ERROR in POST /offers:", error.message);
+    console.error("Full error:", error);
     return next(error);
+  }
+}
+
+// Update offer (admin) - accepts both FormData and JSON
+router.put("/:id", requireAuth, (req, res, next) => {
+  const isFormData = req.headers["content-type"]?.includes("multipart/form-data");
+  
+  if (isFormData) {
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        console.error("❌ Multer error:", err.message);
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      updateOffer(req, res, next);
+    });
+  } else {
+    updateOffer(req, res, next);
   }
 });
 
-// Update offer (admin)
-router.put("/:id", requireAuth, upload.single("image"), async (req, res, next) => {
+async function updateOffer(req, res, next) {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) {
       return res.status(400).json({ success: false, message: "Invalid offer id" });
     }
 
-    const { title, description, promoCode, discount, validFrom, validUntil, isActive } = req.body;
-    let imageUrl = req.body.imageUrl;
+    console.log("✏️ UPDATE OFFER - Request received for ID:", id);
 
-    // If file uploaded, convert to base64 data URL
+    const { title, description, promoCode, discount, validFrom, validUntil, isActive, imageUrl: bodyImageUrl } = req.body;
+    let imageUrl = bodyImageUrl;
+
+    // If file uploaded (FormData), convert to base64 data URL
     if (req.file) {
+      console.log("Converting file to base64...");
       const base64 = req.file.buffer.toString("base64");
       imageUrl = `data:${req.file.mimetype};base64,${base64}`;
     }
@@ -204,11 +260,13 @@ router.put("/:id", requireAuth, upload.single("image"), async (req, res, next) =
 
     await request.query(`UPDATE Offers SET ${updates.join(", ")} WHERE id = @id`);
 
+    console.log("✅ Offer updated successfully:", id);
     return res.json({ success: true, message: "Offer updated" });
   } catch (error) {
+    console.error("❌ ERROR in PUT /offers:", error.message);
     return next(error);
   }
-});
+}
 
 // Delete offer (admin)
 router.delete("/:id", requireAuth, async (req, res, next) => {
