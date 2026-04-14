@@ -164,10 +164,17 @@ function AdminDashboard() {
       return;
     }
 
-    const userData = JSON.parse(userStr);
-    setUser(userData);
-    fetchProducts();
-    fetchAdminUsers();
+    try {
+      const userData = JSON.parse(userStr);
+      setUser(userData);
+      fetchProducts();
+      fetchAdminUsers();
+    } catch {
+      // Corrupted data - clear and redirect to login
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      navigate("/admin/login");
+    }
   }, [navigate]);
 
   // Handle logout
@@ -349,7 +356,11 @@ function AdminDashboard() {
     }
   };
 
-  if (!user) return null;
+  if (!user) return (
+    <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <CircularProgress sx={{ color: "#d4af37" }} />
+    </Box>
+  );
 
   return (
     <Box sx={{ backgroundColor: "#0b0b0b", minHeight: "100vh", width: "100%" }}>
