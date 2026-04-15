@@ -73,77 +73,52 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Create offer (admin) - accepts both FormData and JSON
-router.post("/", requireAuth, (req, res, next) => {
-  // Try to parse as FormData if content-type is multipart, otherwise skip
-  const isFormData = req.headers["content-type"]?.includes("multipart/form-data");
-  
-  if (isFormData) {
-    // If FormData, use multer
-    upload.single("image")(req, res, (err) => {
-      if (err) {
-        console.error("❌ Multer error:", err.message);
-        return res.status(400).json({ success: false, message: err.message });
-      }
-      createOffer(req, res, next);
-    });
-  } else {
-    // If JSON, proceed directly
-    createOffer(req, res, next);
-  }
-});
-
-async function createOffer(req, res, next) {
+// Create offer (admin)
+router.post("/", requireAuth, upload.single("image"), async (req, res, next) => {
   try {
     console.log("📝 CREATE OFFER - Request received");
-    console.log("User:", req.user);
-    console.log("Content-Type:", req.headers["content-type"]);
     console.log("Body:", req.body);
-    console.log("File:", req.file ? "Yes" : "No");
-    
-    const { title, description, promoCode, discount, validFrom, validUntil, imageUrl: bodyImageUrl } = req.body;
-    let imageUrl = bodyImageUrl;
+    console.log("File received:", req.file ? "YES" : "NO");
 
-    console.log("Parsed fields:", { title, description, promoCode, discount, validFrom, validUntil });
+    const { title, description, promoCode, discount, validFrom, validUntil } = req.body;
+    let imageUrl = null;
 
-    // If file uploaded (FormData), convert to base64 data URL
+    // If file uploaded, convert to base64
     if (req.file) {
       console.log("Converting file to base64...");
       const base64 = req.file.buffer.toString("base64");
       imageUrl = `data:${req.file.mimetype};base64,${base64}`;
-      console.log("Image URL created (length:", imageUrl.length, ")");
+      console.log("Image created, size:", imageUrl.length, "bytes");
     }
 
-    // Validate
-    const validation = offerSchema.safeParse({
-      title,
-      description,
-      imageUrl,
-      promoCode,
-      discount: discount ? Number(discount) : null,
-      validFrom,
-      validUntil,
-    });
+    // Validate required fields
+    if (!title || !promoCode || discount === undefined || !validFrom || !validUntil) {
+      console.log("❌ Missing required fields");
+      return res.status(400).json({ 
+        success: false, 
+        message: "Missing required fields",
+        received: { title, description, promoCode, discount, validFrom, validUntil, hasImage: !!req.file }
+      });
+    }
 
-    console.log("Validation:", validation.success ? "PASSED" : "FAILED");
-    if (!validation.success) {
-      console.log("Validation errors:", validation.error.errors);
-      return res.status(400).json({ success: false, errors: validation.error.errors });
+    // Validate discount is a number
+    const discountNum = Number(discount);
+    if (isNaN(discountNum) || discountNum < 0 || discountNum > 100) {
+      return res.status(400).json({ success: false, message: "Discount must be between 0 and 100" });
     }
 
     console.log("Connecting to database...");
     const pool = await getPool();
-    console.log("Database connected, executing query...");
     
     const result = await pool
       .request()
-      .input("title", sql.NVarChar, title)
-      .input("description", sql.NVarChar, description || null)
+      .input("title", sql.NVarChar, String(title))
+      .input("description", sql.NVarChar, description ? String(description) : null)
       .input("imageUrl", sql.NVarChar(sql.MAX), imageUrl)
-      .input("promoCode", sql.NVarChar, promoCode || null)
-      .input("discount", sql.Int, discount ? Number(discount) : null)
-      .input("validFrom", sql.DateTime2, validFrom)
-      .input("validUntil", sql.DateTime2, validUntil)
+      .input("promoCode", sql.NVarChar, String(promoCode))
+      .input("discount", sql.Int, discountNum)
+      .input("validFrom", sql.DateTime2, new Date(validFrom))
+      .input("validUntil", sql.DateTime2, new Date(validUntil))
       .input("createdBy", sql.Int, req.user.id)
       .query(`
         INSERT INTO Offers (title, description, imageUrl, promoCode, discount, validFrom, validUntil, createdBy)
@@ -151,18 +126,18 @@ async function createOffer(req, res, next) {
         SELECT CAST(SCOPE_IDENTITY() as int) as id;
       `);
 
-    console.log("✅ Offer created successfully:", result.recordset[0].id);
+    console.log("✅ SUCCESS - Offer created with ID:", result.recordset[0].id);
     return res.status(201).json({
       success: true,
-      message: "Offer created",
+      message: "Offer created successfully",
       data: { id: result.recordset[0].id },
     });
   } catch (error) {
-    console.error("❌ ERROR in POST /offers:", error.message);
+    console.error("❌ DATABASE ERROR:", error.message);
     console.error("Full error:", error);
     return next(error);
   }
-}
+});
 
 // Update offer (admin) - accepts both FormData and JSON
 router.put("/:id", requireAuth, (req, res, next) => {
