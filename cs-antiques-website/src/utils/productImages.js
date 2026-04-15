@@ -87,14 +87,20 @@ const legacyFileNameMap = {
 
 export function resolveProductImage(mainImage, _productId) {
   if (typeof mainImage === "string" && mainImage.trim()) {
-    // If DB value is an absolute URL, use it as-is.
-    if (/^https?:\/\//i.test(mainImage)) {
+    // If DB value is an absolute URL or data URL, use it as-is
+    if (/^https?:\/\//i.test(mainImage) || /^data:/i.test(mainImage)) {
       return mainImage;
     }
 
     const normalized = mainImage.replace(/\\/g, "/");
 
-    // Handle uploaded images from /uploads/ folder
+    // Skip broken /uploads/undefined paths
+    if (normalized === "/uploads/undefined") {
+      console.log("📸 Skipping broken /uploads/undefined path - using placeholder");
+      return placeholderProductImage;
+    }
+
+    // Handle uploaded images from /uploads/ folder (if they exist)
     if (normalized.startsWith("/uploads/")) {
       // Construct full URL to API endpoint
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";

@@ -181,19 +181,17 @@ router.post("/upload-image", requireAuth, upload.single("image"), async (req, re
       return res.status(400).json({ success: false, message: "No image file provided" });
     }
 
-    // Generate filename: memoryStorage doesn't auto-generate filenames
-    // Format: timestamp-uuid.ext
-    const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${req.file.originalname.split(".").pop()}`;
-    const imagePath = `/uploads/${filename}`;
-    
-    // Note: With memoryStorage, images are stored in memory, not persisted to disk.
-    // In production, consider using Azure Blob Storage or similar service.
+    // Convert file buffer to base64 data URL
+    // This works with memoryStorage and persists in the database
+    const base64Data = req.file.buffer.toString("base64");
+    const mimeType = req.file.mimetype || "image/jpeg";
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
     
     return res.status(201).json({ 
       success: true, 
       data: { 
-        imagePath: imagePath,
-        filename: filename,
+        imagePath: dataUrl,
+        filename: req.file.originalname,
         size: req.file.size
       } 
     });
