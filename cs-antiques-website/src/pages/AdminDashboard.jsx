@@ -431,63 +431,70 @@ function AdminDashboard() {
     }
 
     try {
-      let imagePath = offersFormData.imageUrl;
-      
-      // Upload new image if selected
-      if (imageFile) {
-        const formDataObj = new FormData();
-        formDataObj.append("image", imageFile);
-
-        const uploadResponse = await fetch(apiUrl("/api/products/upload-image"), {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataObj,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (uploadData.success) {
-          imagePath = uploadData.data.imagePath;
-        } else {
-          alert("Error uploading image: " + uploadData.message);
-          return;
-        }
-      }
-
       const url = editingOffer
         ? apiUrl(`/api/offers/${editingOffer.id}`)
         : apiUrl("/api/offers");
 
       const method = editingOffer ? "PUT" : "POST";
 
-      const offerData = {
-        title: offersFormData.title,
-        description: offersFormData.description,
-        promoCode: offersFormData.promoCode,
-        discount: parseInt(offersFormData.discount) || 0,
-        validFrom: new Date(offersFormData.validFrom).toISOString(),
-        validUntil: new Date(offersFormData.validUntil).toISOString(),
-        imageUrl: imagePath,
-      };
+      // If there's an image file, use FormData to send with image
+      if (imageFile) {
+        const formDataObj = new FormData();
+        formDataObj.append("title", offersFormData.title);
+        formDataObj.append("description", offersFormData.description || "");
+        formDataObj.append("promoCode", offersFormData.promoCode);
+        formDataObj.append("discount", parseInt(offersFormData.discount) || 0);
+        formDataObj.append("validFrom", new Date(offersFormData.validFrom).toISOString());
+        formDataObj.append("validUntil", new Date(offersFormData.validUntil).toISOString());
+        formDataObj.append("image", imageFile);
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(offerData),
-      });
+        const response = await fetch(url, {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formDataObj,
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        fetchOffers();
-        handleCloseOffersDialog();
-        alert(editingOffer ? "Offer updated!" : "Offer created!");
+        if (data.success) {
+          fetchOffers();
+          handleCloseOffersDialog();
+          alert(editingOffer ? "Offer updated!" : "Offer created!");
+        } else {
+          alert("Error: " + (data.message || JSON.stringify(data)));
+        }
       } else {
-        alert("Error: " + data.message);
+        // No image file, send as JSON
+        const offerData = {
+          title: offersFormData.title,
+          description: offersFormData.description,
+          promoCode: offersFormData.promoCode,
+          discount: parseInt(offersFormData.discount) || 0,
+          validFrom: new Date(offersFormData.validFrom).toISOString(),
+          validUntil: new Date(offersFormData.validUntil).toISOString(),
+          imageUrl: offersFormData.imageUrl || null,
+        };
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(offerData),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          fetchOffers();
+          handleCloseOffersDialog();
+          alert(editingOffer ? "Offer updated!" : "Offer created!");
+        } else {
+          alert("Error: " + (data.message || JSON.stringify(data)));
+        }
       }
     } catch (error) {
       alert("Error saving offer: " + error.message);

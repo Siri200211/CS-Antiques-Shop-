@@ -9,7 +9,7 @@ const router = express.Router();
 const offerSchema = z.object({
   title: z.string().min(1),
   description: z.string().nullable().optional(),
-  imageUrl: z.string().min(1),
+  imageUrl: z.string().min(1).nullable().optional(),
   promoCode: z.string().nullable().optional(),
   discount: z.number().min(0).max(100).nullable().optional(),
   validFrom: z.string().datetime(),
