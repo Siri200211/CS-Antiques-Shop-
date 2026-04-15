@@ -51,6 +51,9 @@ function AdminDashboard() {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [offerImageFile, setOfferImageFile] = useState(null);
+  const [offerImagePreview, setOfferImagePreview] = useState(null);
+  const [uploadingOfferImage, setUploadingOfferImage] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -396,7 +399,7 @@ function AdminDashboard() {
         validUntil: offer.validUntil ? offer.validUntil.split("T")[0] : "",
         imageUrl: offer.imageUrl || "",
       });
-      setImagePreview(offer.imageUrl || null);
+      setOfferImagePreview(offer.imageUrl || null);
     } else {
       setEditingOffer(null);
       setOffersFormData({
@@ -408,17 +411,53 @@ function AdminDashboard() {
         validUntil: "",
         imageUrl: "",
       });
-      setImagePreview(null);
+      setOfferImagePreview(null);
     }
-    setImageFile(null);
+    setOfferImageFile(null);
     setOpenOffersDialog(true);
   };
 
   const handleCloseOffersDialog = () => {
     setOpenOffersDialog(false);
     setEditingOffer(null);
-    setImageFile(null);
-    setImagePreview(null);
+    setOfferImageFile(null);
+    setOfferImagePreview(null);
+  };
+
+  const handleOfferImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) { alert("Please select a valid image file"); return; }
+      if (file.size > 5 * 1024 * 1024) { alert("Image size must be less than 5MB"); return; }
+      setOfferImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setOfferImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadOfferImage = async () => {
+    if (!offerImageFile) return offersFormData.imageUrl || null;
+    setUploadingOfferImage(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const fd = new FormData();
+      fd.append("image", offerImageFile);
+      const response = await fetch(apiUrl("/api/offers/upload-image"), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await response.json();
+      if (data.success) return data.data.imagePath;
+      alert("Error uploading image: " + data.message);
+      return null;
+    } catch (error) {
+      alert("Error uploading image: " + error.message);
+      return null;
+    } finally {
+      setUploadingOfferImage(false);
+    }
   };
 
   // Handle save offer
@@ -431,13 +470,19 @@ function AdminDashboard() {
     }
 
     try {
+      // Upload image first if a new file was selected
+      let imagePath = offersFormData.imageUrl || null;
+      if (offerImageFile) {
+        imagePath = await uploadOfferImage();
+        if (!imagePath) return; // Upload failed
+      }
+
       const url = editingOffer
         ? apiUrl(`/api/offers/${editingOffer.id}`)
         : apiUrl("/api/offers");
 
       const method = editingOffer ? "PUT" : "POST";
 
-      // Prepare offer data - send image as URL (either from form or placeholder)
       const offerData = {
         title: offersFormData.title,
         description: offersFormData.description,
@@ -445,7 +490,7 @@ function AdminDashboard() {
         discount: parseInt(offersFormData.discount) || 0,
         validFrom: new Date(offersFormData.validFrom).toISOString(),
         validUntil: new Date(offersFormData.validUntil).toISOString(),
-        imageUrl: offersFormData.imageUrl || "https://via.placeholder.com/300x200?text=Offer",
+        imageUrl: imagePath,
       };
 
       const response = await fetch(url, {
@@ -1210,7 +1255,7 @@ function AdminDashboard() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={handleOfferImageChange}
                 style={{ display: "none" }}
                 id="offer-image-upload"
               />
@@ -1223,7 +1268,7 @@ function AdminDashboard() {
                 </Typography>
               </label>
             </Box>
-            {(imagePreview || offersFormData.imageUrl) && (
+            {(offerImagePreview || offersFormData.imageUrl) && (
               <Box
                 sx={{
                   position: "relative",
@@ -1234,7 +1279,7 @@ function AdminDashboard() {
                 }}
               >
                 <img
-                  src={imagePreview || apiUrl(offersFormData.imageUrl)}
+                  src={offerImagePreview || apiUrl(offersFormData.imageUrl)}
                   alt="Preview"
                   style={{
                     width: "100%",
@@ -1242,7 +1287,7 @@ function AdminDashboard() {
                     objectFit: "cover",
                   }}
                 />
-                {uploadingImage && (
+                {uploadingOfferImage && (
                   <Box
                     sx={{
                       position: "absolute",

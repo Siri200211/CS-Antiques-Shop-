@@ -73,6 +73,22 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// Upload offer image
+router.post("/upload-image", requireAuth, upload.single("image"), async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image file provided" });
+    }
+    const imagePath = `/uploads/${req.file.filename}`;
+    return res.status(201).json({
+      success: true,
+      data: { imagePath, filename: req.file.filename, size: req.file.size },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 // Create offer (admin) - simple JSON-only endpoint
 router.post("/", requireAuth, async (req, res, next) => {
   try {
