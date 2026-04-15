@@ -85,7 +85,7 @@ router.post("/", requireAuth, async (req, res, next) => {
       .input("originalPrice", sql.Decimal(18, 2), originalPrice ?? null)
       .input("description", sql.NVarChar(sql.MAX), description ?? null)
       .input("condition", sql.NVarChar(120), condition ?? null)
-      .input("mainImage", sql.NVarChar(500), mainImageDb)
+      .input("mainImage", sql.NVarChar(sql.MAX), mainImageDb)
       .query(`
         INSERT INTO Products (name, category, price, originalPrice, description, condition, mainImage)
         OUTPUT inserted.*
@@ -123,7 +123,7 @@ router.put("/:id", requireAuth, async (req, res, next) => {
       .input("originalPrice", sql.Decimal(18, 2), originalPrice ?? null)
       .input("description", sql.NVarChar(sql.MAX), description ?? null)
       .input("condition", sql.NVarChar(120), condition ?? null)
-      .input("mainImage", sql.NVarChar(500), mainImageDb)
+      .input("mainImage", sql.NVarChar(sql.MAX), mainImageDb)
       .query(`
         UPDATE Products
         SET
@@ -181,17 +181,13 @@ router.post("/upload-image", requireAuth, upload.single("image"), async (req, re
       return res.status(400).json({ success: false, message: "No image file provided" });
     }
 
-    // Convert file buffer to base64 data URL
-    // This works with memoryStorage and persists in the database
-    const base64Data = req.file.buffer.toString("base64");
-    const mimeType = req.file.mimetype || "image/jpeg";
-    const dataUrl = `data:${mimeType};base64,${base64Data}`;
-    
+    const imagePath = `/uploads/${req.file.filename}`;
+
     return res.status(201).json({ 
       success: true, 
       data: { 
-        imagePath: dataUrl,
-        filename: req.file.originalname,
+        imagePath,
+        filename: req.file.filename,
         size: req.file.size
       } 
     });
