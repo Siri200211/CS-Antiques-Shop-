@@ -437,64 +437,34 @@ function AdminDashboard() {
 
       const method = editingOffer ? "PUT" : "POST";
 
-      // If there's an image file, use FormData to send with image
-      if (imageFile) {
-        const formDataObj = new FormData();
-        formDataObj.append("title", offersFormData.title);
-        formDataObj.append("description", offersFormData.description || "");
-        formDataObj.append("promoCode", offersFormData.promoCode);
-        formDataObj.append("discount", parseInt(offersFormData.discount) || 0);
-        formDataObj.append("validFrom", new Date(offersFormData.validFrom).toISOString());
-        formDataObj.append("validUntil", new Date(offersFormData.validUntil).toISOString());
-        formDataObj.append("image", imageFile);
+      // Prepare offer data - send image as URL (either from form or placeholder)
+      const offerData = {
+        title: offersFormData.title,
+        description: offersFormData.description,
+        promoCode: offersFormData.promoCode,
+        discount: parseInt(offersFormData.discount) || 0,
+        validFrom: new Date(offersFormData.validFrom).toISOString(),
+        validUntil: new Date(offersFormData.validUntil).toISOString(),
+        imageUrl: offersFormData.imageUrl || "https://via.placeholder.com/300x200?text=Offer",
+      };
 
-        const response = await fetch(url, {
-          method,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formDataObj,
-        });
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(offerData),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (data.success) {
-          fetchOffers();
-          handleCloseOffersDialog();
-          alert(editingOffer ? "Offer updated!" : "Offer created!");
-        } else {
-          alert("Error: " + (data.message || JSON.stringify(data)));
-        }
+      if (data.success) {
+        fetchOffers();
+        handleCloseOffersDialog();
+        alert(editingOffer ? "Offer updated!" : "Offer created!");
       } else {
-        // No image file, send as JSON
-        const offerData = {
-          title: offersFormData.title,
-          description: offersFormData.description,
-          promoCode: offersFormData.promoCode,
-          discount: parseInt(offersFormData.discount) || 0,
-          validFrom: new Date(offersFormData.validFrom).toISOString(),
-          validUntil: new Date(offersFormData.validUntil).toISOString(),
-          imageUrl: offersFormData.imageUrl || null,
-        };
-
-        const response = await fetch(url, {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(offerData),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          fetchOffers();
-          handleCloseOffersDialog();
-          alert(editingOffer ? "Offer updated!" : "Offer created!");
-        } else {
-          alert("Error: " + (data.message || JSON.stringify(data)));
-        }
+        alert("Error: " + (data.message || JSON.stringify(data)));
       }
     } catch (error) {
       alert("Error saving offer: " + error.message);

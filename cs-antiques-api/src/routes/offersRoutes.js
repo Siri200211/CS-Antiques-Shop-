@@ -73,52 +73,37 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// Create offer (admin)
-router.post("/", requireAuth, upload.single("image"), async (req, res, next) => {
+// Create offer (admin) - simple JSON-only endpoint
+router.post("/", requireAuth, async (req, res, next) => {
   try {
-    console.log("📝 CREATE OFFER - Request received");
-    console.log("Body:", req.body);
-    console.log("File received:", req.file ? "YES" : "NO");
-
-    const { title, description, promoCode, discount, validFrom, validUntil } = req.body;
-    let imageUrl = null;
-
-    // If file uploaded, convert to base64
-    if (req.file) {
-      console.log("Converting file to base64...");
-      const base64 = req.file.buffer.toString("base64");
-      imageUrl = `data:${req.file.mimetype};base64,${base64}`;
-      console.log("Image created, size:", imageUrl.length, "bytes");
-    }
+    const { title, description, promoCode, discount, validFrom, validUntil, imageUrl } = req.body;
 
     // Validate required fields
-    if (!title || !promoCode || discount === undefined || !validFrom || !validUntil) {
-      console.log("❌ Missing required fields");
-      return res.status(400).json({ 
-        success: false, 
-        message: "Missing required fields",
-        received: { title, description, promoCode, discount, validFrom, validUntil, hasImage: !!req.file }
-      });
-    }
+    if (!title) return res.status(400).json({ success: false, message: "Title is required" });
+    if (!promoCode) return res.status(400).json({ success: false, message: "Promo code is required" });
+    if (discount === undefined || discount === null) return res.status(400).json({ success: false, message: "Discount is required" });
+    if (!validFrom) return res.status(400).json({ success: false, message: "Valid from date is required" });
+    if (!validUntil) return res.status(400).json({ success: false, message: "Valid until date is required" });
 
-    // Validate discount is a number
+    // Validate discount is number between 0-100
     const discountNum = Number(discount);
     if (isNaN(discountNum) || discountNum < 0 || discountNum > 100) {
-      return res.status(400).json({ success: false, message: "Discount must be between 0 and 100" });
+      return res.status(400).json({ success: false, message: "Discount must be a number between 0 and 100" });
     }
 
-    console.log("Connecting to database...");
+    // Get database connection
     const pool = await getPool();
-    
+
+    // Insert into database
     const result = await pool
       .request()
-      .input("title", sql.NVarChar, String(title))
-      .input("description", sql.NVarChar, description ? String(description) : null)
-      .input("imageUrl", sql.NVarChar(sql.MAX), imageUrl)
-      .input("promoCode", sql.NVarChar, String(promoCode))
+      .input("title", sql.NVarChar, title)
+      .input("description", sql.NVarChar, description || null)
+      .input("imageUrl", sql.NVarChar(sql.MAX), imageUrl || null)
+      .input("promoCode", sql.NVarChar, promoCode)
       .input("discount", sql.Int, discountNum)
-      .input("validFrom", sql.DateTime2, new Date(validFrom))
-      .input("validUntil", sql.DateTime2, new Date(validUntil))
+      .input("validFrom", sql.DateTime2, new Date(validFrom).toISOString())
+      .input("validUntil", sql.DateTime2, new Date(validUntil).toISOString())
       .input("createdBy", sql.Int, req.user.id)
       .query(`
         INSERT INTO Offers (title, description, imageUrl, promoCode, discount, validFrom, validUntil, createdBy)
@@ -126,15 +111,13 @@ router.post("/", requireAuth, upload.single("image"), async (req, res, next) => 
         SELECT CAST(SCOPE_IDENTITY() as int) as id;
       `);
 
-    console.log("✅ SUCCESS - Offer created with ID:", result.recordset[0].id);
     return res.status(201).json({
       success: true,
       message: "Offer created successfully",
       data: { id: result.recordset[0].id },
     });
   } catch (error) {
-    console.error("❌ DATABASE ERROR:", error.message);
-    console.error("Full error:", error);
+    console.error("Error creating offer:", error);
     return next(error);
   }
 });
