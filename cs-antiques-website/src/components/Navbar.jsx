@@ -24,10 +24,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [aboutClickCount, setAboutClickCount] = useState(0);
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [clickTimeoutId, setClickTimeoutId] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
   const navItems = [
@@ -49,55 +45,6 @@ function Navbar() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const handleAboutClick = (e) => {
-    e.preventDefault();
-    
-    if (aboutClickCount === 0) {
-      navigate("/about");
-      setAboutClickCount(1);
-      
-      if (clickTimeoutId) clearTimeout(clickTimeoutId);
-      const timeoutId = setTimeout(() => {
-        setAboutClickCount(0);
-      }, 3000);
-      setClickTimeoutId(timeoutId);
-      return;
-    }
-
-    const newCount = aboutClickCount + 1;
-    setAboutClickCount(newCount);
-
-    if (newCount === 3) {
-      setShowPasswordDialog(true);
-      setAboutClickCount(0);
-      setEnteredPassword("");
-      if (clickTimeoutId) clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-    }
-  };
-
-  const handlePasswordSubmit = () => {
-    if (enteredPassword.toLowerCase() === "chehan") {
-      setShowPasswordDialog(false);
-      setEnteredPassword("");
-      setAboutClickCount(0);
-      if (clickTimeoutId) clearTimeout(clickTimeoutId);
-      setClickTimeoutId(null);
-      navigate("/admin/login");
-    } else {
-      setEnteredPassword("");
-      alert("❌ Incorrect password! Try again.");
-    }
-  };
-
-  const handlePasswordCancel = () => {
-    setShowPasswordDialog(false);
-    setEnteredPassword("");
-    setAboutClickCount(0);
-    if (clickTimeoutId) clearTimeout(clickTimeoutId);
-    setClickTimeoutId(null);
   };
 
   const isActive = (path) => location.pathname === path;
@@ -127,9 +74,9 @@ function Navbar() {
           {navItems.map((item) => (
             <ListItem
               key={item.label}
-              component={item.label === "About" ? "button" : RouterLink}
-              to={item.label === "About" ? undefined : item.path}
-              onClick={item.label === "About" ? handleAboutClick : handleDrawerToggle}
+              component={RouterLink}
+              to={item.path}
+              onClick={handleDrawerToggle}
               sx={{
                 py: 1.8,
                 px: 2,
@@ -265,9 +212,8 @@ function Navbar() {
               {navItems.map((item, index) => (
                 <Button
                   key={item.label}
-                  component={item.label === "About" ? "button" : RouterLink}
-                  to={item.label === "About" ? undefined : item.path}
-                  onClick={item.label === "About" ? handleAboutClick : undefined}
+                  component={RouterLink}
+                  to={item.path}
                   sx={{
                     color: isActive(item.path) ? "#d4af37" : "#e0e0e0",
                     fontSize: "0.9rem",
@@ -363,92 +309,6 @@ function Navbar() {
       >
         {drawer}
       </Drawer>
-
-      {/* Secret Admin Unlock Dialog */}
-      <Dialog open={showPasswordDialog} onClose={handlePasswordCancel} maxWidth="sm" fullWidth>
-        <DialogTitle
-          sx={{
-            background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-            color: "#0b0b0b",
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            fontFamily: "'Playfair Display', serif",
-            textTransform: "uppercase",
-            fontSize: "1.2rem",
-          }}
-        >
-          🔐 Admin Access
-        </DialogTitle>
-        <DialogContent sx={{ pt: 3, pb: 2, background: "linear-gradient(135deg, #1a1a1a 0%, #0b0b0b 100%)" }}>
-          <TextField
-            autoFocus
-            fullWidth
-            type="password"
-            label="Enter Password"
-            value={enteredPassword}
-            onChange={(e) => setEnteredPassword(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                handlePasswordSubmit();
-              }
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                color: "#e0e0e0",
-                "&:hover fieldset": {
-                  borderColor: "#d4af37",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#d4af37",
-                  boxShadow: "0 0 12px rgba(212, 175, 55, 0.3)",
-                },
-              },
-              "& .MuiInputLabel-root": {
-                color: "#a0a0a0",
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#d4af37",
-              },
-            }}
-          />
-        </DialogContent>
-        <DialogActions sx={{ p: 2, background: "linear-gradient(135deg, #1a1a1a 0%, #0b0b0b 100%)", gap: 1 }}>
-          <Button
-            onClick={handlePasswordCancel}
-            sx={{
-              color: "#a0a0a0",
-              textTransform: "uppercase",
-              fontWeight: 700,
-              borderRadius: "6px",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                color: "#d4af37",
-                background: "rgba(212, 175, 55, 0.1)",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handlePasswordSubmit}
-            sx={{
-              background: "linear-gradient(135deg, #d4af37 0%, #e8c547 100%)",
-              color: "#0b0b0b",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              borderRadius: "6px",
-              px: 3,
-              transition: "all 0.3s ease",
-              "&:hover": {
-                boxShadow: "0 8px 24px rgba(212, 175, 55, 0.5)",
-                transform: "translateY(-2px)",
-              },
-            }}
-          >
-            Unlock
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }
