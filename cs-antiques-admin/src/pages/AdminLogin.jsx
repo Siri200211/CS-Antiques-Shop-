@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -20,10 +20,20 @@ function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Professional Industry Standard "Guest Guard":
+  // Instantly redirect users who are already logged in to the dashboard
+  // so they never see the login page unnecessarily.
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const userStr = localStorage.getItem("user");
+    if (token && userStr) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
     try {
       const response = await fetch(apiUrl("/api/auth/login"), {
