@@ -34,7 +34,7 @@ const setupCors = () => {
   const allowedOrigins = isProduction
     ? [
       "https://wonderful-pond-0f05e1700.7.azurestaticapps.net",
-      "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app",
+      "https://lively-mud-064425800.7.azurestaticapps.net",
       "https://yourdomain.com", // Add your production domain
     ]
     : ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"];
