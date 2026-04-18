@@ -15,55 +15,49 @@ import Gallery from "./pages/Gallery";
 import Location from "./pages/Location";
 import Contact from "./pages/Contact";
 import Offers from "./pages/Offers";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
+    const { pathname } = useLocation();
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+    return null;
 }
 
 function App() {
-  return (
-    <ThemeProvider theme={luxuryTheme}>
-      <CssBaseline />
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Admin Routes - Completely isolated, no flex layout wrapper */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-          {/* Public Routes */}
-          <Route
-            path="/*"
-            element={
-              <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-                <Navbar />
-                <Box component="main" sx={{ flex: 1 }}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/product/:id" element={<ProductDetail />} />
-                    <Route path="/gallery" element={<Gallery />} />
-                    <Route path="/location" element={<Location />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/offers" element={<Offers />} />
-                  </Routes>
-                </Box>
-                <Footer />
-                <FloatingWhatsApp />
-              </Box>
-            }
-          />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={luxuryTheme}>
+            <CssBaseline />
+            <Router>
+                <ScrollToTop />
+                <Routes>
+                    {/* Public Routes */}
+                    <Route
+                        path="/*"
+                        element={
+                            <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                                <Navbar />
+                                <Box component="main" sx={{ flex: 1 }}>
+                                    <Routes>
+                                        <Route path="/" element={<Home />} />
+                                        <Route path="/about" element={<About />} />
+                                        <Route path="/products" element={<Products />} />
+                                        <Route path="/product/:id" element={<ProductDetail />} />
+                                        <Route path="/gallery" element={<Gallery />} />
+                                        <Route path="/location" element={<Location />} />
+                                        <Route path="/contact" element={<Contact />} />
+                                        <Route path="/offers" element={<Offers />} />
+                                    </Routes>
+                                </Box>
+                                <Footer />
+                                <FloatingWhatsApp />
+                            </Box>
+                        }
+                    />
+                </Routes>
+            </Router>
+        </ThemeProvider>
+    );
 }
 
 export default App;

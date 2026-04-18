@@ -29,15 +29,15 @@ app.use(helmet({
 // Security: CORS configuration (environment-aware)
 const setupCors = () => {
   const isProduction = env.nodeEnv === "production";
-  
+
   // For production, restrict to your domain
-  const allowedOrigins = isProduction 
+  const allowedOrigins = isProduction
     ? [
-        "https://wonderful-pond-0f05e1700.7.azurestaticapps.net",
-        "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app",
-        "https://yourdomain.com", // Add your production domain
-      ]
-    : ["http://localhost:5173", "http://localhost:3000"];
+      "https://wonderful-pond-0f05e1700.7.azurestaticapps.net",
+      "https://698ff5393ea9ca87ce90a744--csantiquess.netlify.app",
+      "https://yourdomain.com", // Add your production domain
+    ]
+    : ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"];
 
   return cors({
     origin: (origin, callback) => {
@@ -75,7 +75,7 @@ app.use("/uploads", (req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Content-Type");
   res.header("Cross-Origin-Resource-Policy", "cross-origin");
   res.header("Cache-Control", "public, max-age=86400"); // Cache for 24 hours
-  
+
   express.static(path.join(__dirname, "../uploads"), {
     maxAge: "1d",
     etag: false,

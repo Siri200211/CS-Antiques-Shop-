@@ -45,7 +45,7 @@ function AdminLogin() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Redirect to admin dashboard
-      navigate("/admin/dashboard");
+      navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
       setError("Connection error. Make sure backend is running on port 5000. Error: " + err.message);

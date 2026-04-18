@@ -179,7 +179,7 @@ function Offers() {
                   >
                     <Box
                       component="img"
-                      src={offer.imageUrl}
+                      src={offer.imageUrl?.startsWith('/') ? apiUrl(offer.imageUrl) : offer.imageUrl}
                       alt={offer.title}
                       sx={{
                         position: "absolute",

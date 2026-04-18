@@ -189,7 +189,7 @@ function AdminDashboard() {
     const userStr = localStorage.getItem("user");
 
     if (!token || !userStr) {
-      navigate("/admin/login");
+      navigate("/login");
       return;
     }
 
@@ -203,7 +203,7 @@ function AdminDashboard() {
       // Corrupted data - clear and redirect to login
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
-      navigate("/admin/login");
+      navigate("/login");
     }
   }, [navigate]);
 
@@ -211,7 +211,7 @@ function AdminDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
-    navigate("/admin/login");
+    navigate("/login");
   };
 
   // Open add/edit dialog
@@ -624,7 +624,7 @@ function AdminDashboard() {
           <Tab icon={<AdminPanelSettings />} iconPosition="start" label="Admin Users" />
         </Tabs>
 
-        {/* ═══════════ PRODUCTS TAB ═══════════ */}
+        {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ PRODUCTS TAB ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
         {activeTab === 0 && (
           <>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
@@ -689,7 +689,7 @@ function AdminDashboard() {
           </>
         )}
 
-        {/* ═══════════ OFFERS TAB ═══════════ */}
+        {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ OFFERS TAB ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
         {activeTab === 1 && (
           <>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
@@ -776,7 +776,7 @@ function AdminDashboard() {
           </>
         )}
 
-        {/* ═══════════ ADMIN USERS TAB ═══════════ */}
+        {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ ADMIN USERS TAB ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
         {activeTab === 2 && (
           <>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}>
@@ -973,7 +973,7 @@ function AdminDashboard() {
           <TextField
             fullWidth
             label="Main Image URL"
-            helperText="Use /images/products/col1.jpeg … col19.jpeg. Legacy DB paths like /images/products/table1.jpg also work. Leave empty for a neutral No image slot."
+            helperText="Use /images/products/col1.jpeg ΓÇª col19.jpeg. Legacy DB paths like /images/products/table1.jpg also work. Leave empty for a neutral No image slot."
             FormHelperTextProps={{ sx: { color: "#888", fontSize: "0.75rem" } }}
             value={formData.mainImage}
             onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
